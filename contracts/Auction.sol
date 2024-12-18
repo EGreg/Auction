@@ -61,6 +61,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
     error NFTAlreadyClaimed();
     error NFTNotFound();
+    error Disabled();
 
     error WrongClaimInterval();
 
@@ -190,6 +191,9 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     // auction winners can claim any NFT owned by the auction,
     // and shouldn't bid unless the count > maxWinners
     function NFTclaim(uint256 tokenId) external {
+        if (address(nftContract) == address(0)) {
+            revert Disabled();
+        }
         address sender = _msgSender();
         _claim(sender);
 
@@ -207,6 +211,10 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     // auction owner can send the NFTs anywhere if auction was canceled or pass claimPeriodTime
     // the auction owner would typically have been owner of all the NFTs sent to it
     function NFTtransfer(uint256 tokenId, address recipient) external onlyOwner {
+        if (address(nftContract) == address(0)) {
+            revert Disabled();
+        }
+        
         if (!canceled || block.timestamp <= endTime + claimPeriod) {
             revert AuctionNotCanceled();
         }

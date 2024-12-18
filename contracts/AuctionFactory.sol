@@ -91,7 +91,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
     * @param winnerClaimInterval winners can choose tokenid in claim method. 
     * Mean after endTime 1st winner can claim and choose token, after `winnerClaimInterval` 2nd winner can choose and so on
     * @param startingPrice starting price 
-    * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
+    * @param increase increase tuple [amount, bidsCount, canBidAbove] How much will the price increase by amount after bidsCount bids occur?
     * @param nft nft contract
     * @param tokenIds winners will obtain this tokenIds 
     * @return instance address of created instance `Auction`
