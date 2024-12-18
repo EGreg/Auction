@@ -35,7 +35,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
     ////////////////////////////////////////////////////////////////////////
     // external section ////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
-    
+
     /**
     * @notice produce Auction instance
     * @param token address of erc20 token which using when user bid and charged by factory.
@@ -46,6 +46,8 @@ contract AuctionFactory is IAuctionFactory, Ownable {
     * @param startingPrice starting price 
     * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
     * @param maxWinners maximum winners
+    * @param winnerClaimInterval winners can choose tokenid in claim method. 
+    * Mean after endTime 1st winner can claim and choose token, after `winnerClaimInterval` 2nd winner can choose and so on
     * @param nft nft contract
     * @param tokenIds winners will obtain this tokenIds 
     * @return instance address of created instance `Auction`
@@ -59,6 +61,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         uint256 startingPrice,
         IAuction.Increase memory increase,
         uint32 maxWinners,
+        uint32 winnerClaimInterval,
         address nft,
         uint256[] memory tokenIds
     ) 
@@ -71,7 +74,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         _beforeInit(instance);
         _validateParams(token, endTime);
 
-        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, startingPrice, increase, maxWinners, nft, tokenIds);
+        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, startingPrice, increase, maxWinners, winnerClaimInterval, nft, tokenIds);
         
         _afterInit(instance, ms);
     }
@@ -87,6 +90,8 @@ contract AuctionFactory is IAuctionFactory, Ownable {
     * @param startingPrice starting price 
     * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
     * @param maxWinners maximum winners
+    * @param winnerClaimInterval winners can choose tokenid in claim method. 
+    * Mean after endTime 1st winner can claim and choose token, after `winnerClaimInterval` 2nd winner can choose and so on
     * @param nft nft contract
     * @param tokenIds winners will obtain this tokenIds 
     * @return instance address of created instance `Auction`
@@ -101,6 +106,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         uint256 startingPrice,
         IAuction.Increase memory increase,
         uint32 maxWinners,
+        uint32 winnerClaimInterval,
         address nft,
         uint256[] memory tokenIds
     ) 
@@ -112,7 +118,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         _beforeInit(instance);
         _validateParams(token, endTime);
         
-        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, startingPrice, increase, maxWinners, nft, tokenIds);
+        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, startingPrice, increase, maxWinners, winnerClaimInterval, nft, tokenIds);
         _afterInit(instance, ms);
     }
 

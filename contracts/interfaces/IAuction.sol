@@ -23,6 +23,7 @@ interface IAuction {
         uint256 startingPrice,
         Increase memory increase,
         uint32 maxWinners,
+        uint32 winnerClaimInterval,
         address nft,
         uint256[] memory tokenIds
     ) external;

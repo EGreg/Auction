@@ -25,6 +25,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
     BidStruct[] public bids;
     uint32 public maxWinners;
+    uint32 public winnerClaimInterval;
     uint32 public winningSmallestIndex; // starts at 1
 
     struct WinningStruct {
@@ -61,6 +62,8 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     error NFTAlreadyClaimed();
     error NFTNotFound();
 
+    error WrongClaimInterval();
+
 
     constructor() {
         _disableInitializers();
@@ -75,6 +78,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         uint256 startingPrice_,
         Increase memory increase_,
         uint32 maxWinners_,
+        uint32 winnerClaimInterval_,
         address nft,
         uint256[] memory tokenStates_
     ) 
@@ -97,6 +101,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         priceIncrease.numBids = increase_.numBids;
         priceIncrease.canBidAboveIncrease = increase_.canBidAboveIncrease;
         maxWinners = maxWinners_;
+        winnerClaimInterval = winnerClaimInterval_;
 
         winningBidIndex[address(0)].bidIndex = 0;
         bids.push(BidStruct(address(0), false, 0));
@@ -318,6 +323,10 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         }
         if (winningBidIndex[sender].claimed == true) {
             revert AlreadyClaimed();
+        }
+        uint256 orderInClaim = winningBidIndex[sender].bidIndex - winningSmallestIndex;
+        if (endTime + orderInClaim*winnerClaimInterval < block.timestamp) {
+            revert WrongClaimInterval();
         }
 
     }
