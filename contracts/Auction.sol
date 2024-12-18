@@ -199,10 +199,10 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         }
     }
 
-    // auction owner can send the NFTs anywhere if auction was canceled
+    // auction owner can send the NFTs anywhere if auction was canceled or pass claimPeriodTime
     // the auction owner would typically have been owner of all the NFTs sent to it
     function NFTtransfer(uint256 tokenId, address recipient) external onlyOwner {
-        if (!canceled) {
+        if (!canceled || block.timestamp <= endTime + claimPeriod) {
             revert AuctionNotCanceled();
         }
         checkNFT(tokenId);
