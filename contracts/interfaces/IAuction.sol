@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0 <0.9.0;
 interface IAuction {
-    
+    enum NFTState {NONE, NOT_CLAIMED, CLAIMED}
+
     struct BidStruct {
         address bidder;
+        bool offchain;
         uint256 amount;
     }
     struct Increase {
