@@ -9,10 +9,109 @@ import "./interfaces/IAuction.sol";
 import "./interfaces/IAuctionFactory.sol";
 
 //import "hardhat/console.sol";
-contract AuctionFactory is IAuctionFactory {
+contract AuctionFactory is IAuctionFactory, Ownable {
     using Clones for address;
     using Address for address;
+
+    /**
+    * @custom:shortd implementationAuction address
+    * @notice implementationAuction address
+    */
+    address public immutable implementationAuction;
+
+    address[] public instances;
     
+    error InstanceCreatedFailed();
+    error InvalidToken(address token);
+    error InvalidTime();
+
+    event InstanceCreated(address instance, uint instancesCount);
+    
+    constructor(address _implementation) 
+    {
+        implementationAuction = _implementation;
+    }
+
+    /**
+    * @notice produce Auction instance
+    * @param token address of erc20 token which using when user bid and charged by factory.
+    * @param cancelable can Auction be cancelled or no
+    * @param startTime auction start time
+    * @param endTime auction end time
+    * @param claimPeriod can't withdraw and nftTransfer before (endTime + claimPeriod)
+    * @param startingPrice starting price 
+    * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
+    * @param maxWinners maximum winners
+    * @param nft nft contract
+    * @param tokenIds winners will obtain this tokenIds 
+    * @return instance address of created instance `Auction`
+    */
+    function produce(
+        address token,
+        bool cancelable,
+        uint64 startTime,
+        uint64 endTime,
+        uint64 claimPeriod,
+        uint256 startingPrice,
+        IAuction.Increase memory increase,
+        uint32 maxWinners,
+        address nft,
+        uint256[] memory tokenIds
+    ) 
+        external 
+        returns (address instance) 
+    {
+        address ms = _msgSender();
+        instance = address(implementationAuction).clone();
+        
+        _beforeInit(instance);
+        _validateParams(token, endTime);
+
+        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, startingPrice, increase, maxWinners, nft, tokenIds);
+        
+        _afterInit(instance, ms);
+    }
+
+    /**
+    * @notice produce deterministic(with salt) Auction instance
+    * @param salt salt
+    * @param token address of erc20 token which using when user bid and charged by factory.
+    * @param cancelable can Auction be cancelled or no
+    * @param startTime auction start time
+    * @param endTime auction end time
+    * @param claimPeriod can't withdraw and nftTransfer before (endTime + claimPeriod)
+    * @param startingPrice starting price 
+    * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
+    * @param maxWinners maximum winners
+    * @param nft nft contract
+    * @param tokenIds winners will obtain this tokenIds 
+    * @return instance address of created instance `Auction`
+    */
+    function produceDeterministic(
+        bytes32 salt,
+        address token,
+        bool cancelable,
+        uint64 startTime,
+        uint64 endTime,
+        uint64 claimPeriod,
+        uint256 startingPrice,
+        IAuction.Increase memory increase,
+        uint32 maxWinners,
+        address nft,
+        uint256[] memory tokenIds
+    ) 
+        external 
+        returns (address instance) 
+    {
+        address ms = _msgSender();
+        instance = address(implementationAuction).cloneDeterministic(salt);
+        _beforeInit(instance);
+        _validateParams(token, endTime);
+        
+        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, startingPrice, increase, maxWinners, nft, tokenIds);
+        _afterInit(instance, ms);
+    }
+
     function doCharge(
         address targetToken, 
         uint256 amount, 
@@ -23,5 +122,44 @@ contract AuctionFactory is IAuctionFactory {
         returns(bool returnSuccess) 
     {
         returnSuccess = true;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // internal section ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    function _beforeInit(
+        address instance
+    )
+        internal
+    {
+
+        if (instance == address(0)) {
+            revert InstanceCreatedFailed();
+        }
+        instances.push(instance);
+        emit InstanceCreated(instance, instances.length);
+
+    }
+
+    function _validateParams(
+        address token,
+        uint64 endTime
+    )
+        internal 
+        view
+    {
+        if (!token.isContract()) {
+            revert InvalidToken(token);
+        }
+        if (endTime <= block.timestamp) {
+            revert InvalidTime();
+        }
+
+    }
+    
+    function _afterInit(address instance, address sender) internal {
+        //-- transferownership to sender
+        Ownable(instance).transferOwnership(sender);
+        //-----------------
     }
 }
