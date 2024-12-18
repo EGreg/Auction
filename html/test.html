@@ -1,0 +1,320 @@
+<html>
+<head>
+
+    <script type="text/javascript" src="https://intercoin.app/Q/plugins/Q/js/jquery-3.7.1.min.js"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js"></script>
+    
+    <!-- 
+    <script type="text/javascript" src=""></script>
+    -->
+    <script type="text/javascript">
+    $(function(){
+        // localStorage.setItem('AuctionFactoryAddress', '0x123123123');
+        var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
+        if (AuctionFactoryAddress === null) {
+            $('body').html(
+            "need to setup 'AuctionFactoryAddress' key in localStorage"
+            );
+        }
+
+        
+        $('form select.showCustomInput').off('change').on('change', function(e){
+            e.preventDefault();
+            var id = $(this).attr('id');
+            var val = $(this).val();
+            var $custom = $(this).parent().find('#'+id+'_custom');
+            var customHidden = ($custom.css('display') == 'none') ? false : true;
+console.log(id, val, id+'_custom', $custom, customHidden);
+            if (val == 'custom' && !customHidden) { $custom.show(); }
+            if (val != 'custom' && customHidden) { $custom.hide(); }
+        })
+        $('#ProduceForm').on('submit', function(e) { //use on if jQuery 1.7+
+            e.preventDefault();  //prevent form from submitting
+            var data = $("#ProduceForm :input").serializeArray();
+            console.log(data); //use the console for debugging, F12 in Chrome, not alerts
+        });
+    });
+
+
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="css/form.css" media="screen,print">
+</head>
+<body>
+    <!--
+    address token,
+    bool cancelable,
+    uint64 startTime,
+    uint64 endTime,
+    uint64 claimPeriod,
+    uint32 maxWinners,
+    uint32 winnerClaimInterval,
+    uint256 startingPrice,
+    IAuction.Increase memory increase,
+    address nft,
+    uint256[] memory tokenIds
+    -->
+    <div class="main-wrapper">
+        <div class="form-wrapper">
+            <form id="ProduceForm" action="javascript::void(0)">
+                <!-- address token -->
+                <div class="mb-5">
+                    <label for="token" class="form-label">Token</label>
+                    <input
+                    type="text"
+                    name="token"
+                    id="token"
+                    placeholder="0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
+                    class="form-input"
+                    />
+                </div>
+
+                <!-- bool cancelable -->
+                <div class="mb-5">
+                    <label class="form-label">Cancelable</label>
+                    <div class="flex mb-5">
+                        <div class="flex">
+                            <input
+                                type="radio"
+                                name="cancelable"
+                                id="cancelable1"
+                                class="radio"
+                            />
+                            <label for="cancelable1" class="radio-label"> Yes </label>
+                        </div>
+                        <div class="flex">
+                            <input
+                                type="radio"
+                                name="cancelable"
+                                id="cancelable2"
+                                class="radio"
+                            />
+                            <label for="cancelable2" class="radio-label"> No </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- uint64 startTime -->
+                <!-- uint64 endTime -->
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full sm:w-half px-3">
+                    <div class="mb-5 w-full">
+                        <label for="startTime" class="form-label"> Start Date </label>
+                        <input
+                        type="date"
+                        name="startTime"
+                        id="startTime"
+                        class="form-input"
+                        />
+                    </div>
+                    </div>
+                    <div class="w-full sm:w-half px-3">
+                    <div class="mb-5">
+                        <label for="endTime" class="form-label"> End Date </label>
+                        <input
+                        type="date"
+                        name="endTime"
+                        id="endTime"
+                        class="form-input"
+                        />
+                    </div>
+                    </div>
+                </div>
+
+                <!-- uint32 maxWinners -->
+                <div class="mb-5">
+                    <label for="maxWinners" class="form-label">
+                    How many winners will be?
+                    </label>
+                    <input
+                    type="number"
+                    name="maxWinners"
+                    id="maxWinners"
+                    placeholder="5"
+                    class="form-input"
+                    />
+                </div>
+
+                <!-- uint64 claimPeriod -->
+                <!-- uint32 winnerClaimInterval -->
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5">
+                            <label for="claimPeriod" class="form-label">Claim Period</label>
+                        <!--
+                            <input
+                            type="number"
+                            name="claimPeriod"
+                            id="claimPeriod"
+                            placeholder="86400"
+                            class="form-input"
+                            />
+                        -->
+                            <select
+                            name="claimPeriod"
+                            id="claimPeriod"
+                            class="form-input showCustomInput"
+                            >
+                                <option value="300">5 minutes</option>
+                                <option value="600">10 minutes</option>
+                                <option value="1800">30 minutes</option>
+                                <option value="3600">1 hour</option>
+                                <option value="7200">2 hours</option>
+                                <option value="10800">3 hours</option>
+                                <option value="18000">5 hours</option>
+                                <option value="36000">10 hours</option>
+                                <option value="86400">1 day</option>
+                                <option value="259200">3 days</option>
+                                <option value="432000">5 days</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                            <input
+                            style="display:none"
+                            type="number"
+                            name="claimPeriod_custom"
+                            id="claimPeriod_custom"
+                            placeholder="0"
+                            class="form-input form-input-custom"
+                            />
+                            <small>period when winner can claim his token</small>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5">
+                            <label for="winnerClaimInterval" class="form-label">Claim Interval</label>
+                            <select
+                            name="winnerClaimInterval"
+                            id="winnerClaimInterval"
+                            class="form-input showCustomInput"
+                            >
+                                <option value="300">5 minutes</option>
+                                <option value="600">10 minutes</option>
+                                <option value="1800">30 minutes</option>
+                                <option value="3600">1 hour</option>
+                                <option value="7200">2 hours</option>
+                                <option value="10800">3 hours</option>
+                                <option value="18000">5 hours</option>
+                                <option value="36000">10 hours</option>
+                                <option value="86400">1 day</option>
+                                <option value="259200">3 days</option>
+                                <option value="432000">5 days</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                            
+                            <input
+                            style="display:none"
+                            type="number"
+                            name="winnerClaimInterval_custom"
+                            id="winnerClaimInterval_custom"
+                            placeholder="0"
+                            class="form-input form-input-custom"
+                            />
+
+                            <small>Claiming is sequential: the first winner can claim immediately, followed by others at intervals</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- uint256 startingPrice -->
+                <div class="mb-5">
+                    <label for="startingPrice" class="form-label">Starting Price</label>
+                    <input
+                    type="text"
+                    name="startingPrice"
+                    id="startingPrice"
+                    placeholder="1.258"
+                    class="form-input"
+                    />
+                </div>
+
+                <!-- IAuction.Increase memory increase,  -->
+                <!--     uint128 amount; // can't increase by over half the range -->
+                <!--     uint32 numBids; // increase after this many bids -->
+                <!--     bool canBidAboveIncrease; -->
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full sm:w-div3 px-3">
+                        <div class="mb-5">
+                            <label for="increase_amount" class="form-label">Bid Amount</label>
+                            <input
+                            type="text"
+                            name="increase_amount"
+                            id="claimPeriod"
+                            placeholder="0.025"
+                            class="form-input"
+                            />
+                            <small>How much will the price increase by amount after bidsCount bids occur?</small>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-div3 px-3">
+                        <div class="mb-5">
+                            <label for="increase_numBids" class="form-label"> Number of Bids</label>
+                            <input
+                            type="number"
+                            name="increase_numBids"
+                            id="increase_numBids"
+                            placeholder="12"
+                            class="form-input"
+                            />
+                            <small>How many bids need to occur for the price to increase?</small>
+                        </div>
+                        
+                    </div>
+                    <div class="w-full sm:w-div3 px-3">
+                        <label class="form-label">Above Increase</label>
+                        <div class="flex mb-5" style="padding-top:10px">
+                            <div class="flex">
+                                <input
+                                    type="radio"
+                                    name="canBidAboveIncrease"
+                                    id="canBidAboveIncrease1"
+                                    class="radio"
+                                />
+                                <label for="canBidAboveIncrease1" class="radio-label"> Yes </label>
+                            </div>
+                            <div class="flex">
+                                <input
+                                    type="radio"
+                                    name="canBidAboveIncrease"
+                                    id="canBidAboveIncrease2"
+                                    class="radio"
+                                />
+                                <label for="canBidAboveIncrease2" class="radio-label"> No </label>
+                            </div>
+                        </div>
+                        <small>if Bid can not be more that amount turn into 'No'</small>
+                    </div>
+                </div>
+
+                <!-- address nft -->
+                <div class="mb-5">
+                    <label for="nft" class="form-label">address of NFT contract</label>
+                    <input
+                    type="text"
+                    name="nft"
+                    id="nft"
+                    placeholder="0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
+                    class="form-input"
+                    />
+                </div>
+
+                <!-- uint256[] memory tokenIds -->
+                <div class="mb-5">
+                    <label for="tokenIds" class="form-label">tokenIds</label>
+                    <input
+                    type="text"
+                    name="tokenIds"
+                    id="tokenIds"
+                    placeholder="[22,555,333,5556]"
+                    class="form-input"
+                    />
+                </div>
+
+                <div>
+                    <button class="btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
