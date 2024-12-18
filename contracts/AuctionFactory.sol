@@ -32,6 +32,10 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         implementationAuction = _implementation;
     }
 
+    ////////////////////////////////////////////////////////////////////////
+    // external section ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    
     /**
     * @notice produce Auction instance
     * @param token address of erc20 token which using when user bid and charged by factory.
@@ -121,7 +125,20 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         external 
         returns(bool returnSuccess) 
     {
-        returnSuccess = true;
+        bytes memory data = abi.encodeWithSelector(IERC20(targetToken).transferFrom.selector, from, to, amount);
+        // we shoud not revert transaction, just return failed condition of `transferFrom` attempt
+        (bool success, bytes memory returndata) = address(targetToken).call{value: 0}(data);
+
+        if (success) {
+            if (returndata.length == 0) {
+                // only check isContract if the call was successful and the return data is empty
+                // otherwise we already know that it was a contract
+                require(targetToken.isContract(), "Address: call to non-contract");
+            }
+            returnSuccess = true;
+        } else {
+            returnSuccess = false;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////
