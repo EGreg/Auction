@@ -75,10 +75,10 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         uint64 startTime_,
         uint64 endTime_,
         uint64 claimPeriod_,
-        uint256 startingPrice_,
-        Increase memory increase_,
         uint32 maxWinners_,
         uint32 winnerClaimInterval_,
+        uint256 startingPrice_,
+        Increase memory increase_,
         address nft,
         uint256[] memory tokenStates_
     ) 

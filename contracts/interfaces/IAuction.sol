@@ -20,10 +20,10 @@ interface IAuction {
         uint64 startTime,
         uint64 endTime,
         uint64 claimPeriod,
-        uint256 startingPrice,
-        Increase memory increase,
         uint32 maxWinners,
         uint32 winnerClaimInterval,
+        uint256 startingPrice,
+        Increase memory increase,
         address nft,
         uint256[] memory tokenIds
     ) external;
