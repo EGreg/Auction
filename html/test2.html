@@ -1,0 +1,347 @@
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+            /* Universal Reset */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+    
+            /* Base Styles */
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: #f9f9f9;
+                color: #07074d;
+            }
+    
+            /* Form Controls */
+            .form-label {
+                font-size: 1rem;
+                font-weight: 600;
+                color: #07074d;
+                margin-bottom: 8px;
+                display: inline-block;
+            }
+    
+            .form-input {
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #e0e0e0;
+                border-radius: 6px;
+                font-size: 1rem;
+                color: #6b7280;
+                outline: none;
+                background-color: white;
+            }
+    
+            .form-input:focus {
+                border-color: #6a64f1;
+                box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+            }
+    
+            .radio-label {
+                margin-left: 8px;
+                font-size: 1rem;
+                color: #07074d;
+            }
+    
+            .radio {
+                margin-right: 4px;
+            }
+    
+            .btn {
+                display: inline-block;
+                padding: 12px 24px;
+                background-color: #6a64f1;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                text-align: center;
+            }
+    
+            .btn:hover {
+                box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+            }
+    
+            /* Spacing Utilities */
+            .mb-5 {
+                margin-bottom: 20px;
+            }
+    
+            .pt-3 {
+                padding-top: 12px;
+            }
+    
+            .flex {
+                display: flex;
+                align-items: center;
+            }
+    
+            .flex-wrap {
+                flex-wrap: wrap;
+            }
+    
+            .gap-4 {
+                gap: 16px;
+            }
+    
+            /* Grid System */
+            .w-full {
+                width: 100%;
+            }
+    
+            .sm\:w-half {
+                width: 50%;
+            }
+    
+            .px-3 {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+    
+            /* Specific Styles for Bid Interface */
+            .main-wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 48px;
+            }
+    
+            .gallery {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+    
+            .gallery img {
+                width: 60px;
+                height: 60px;
+                background-color: #e0e0e0;
+                border: 1px solid #e0e0e0;
+            }
+    
+            .auction-details {
+                margin-bottom: 20px;
+            }
+    
+            .timer {
+                font-size: 1.2em;
+                font-weight: 500;
+                margin-bottom: 10px;
+                color: #07074d;
+            }
+    
+            .bid-button {
+                display: inline-block;
+                padding: 14px 32px;
+                background-color: #6a64f1;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                text-align: center;
+            }
+    
+            .bid-button:hover {
+                box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+            }
+    
+            .bidders {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+    
+            .bidders li {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                font-size: 16px;
+                color: #07074d;
+            }
+    
+            .bid-modal {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 100%;
+                max-width: 400px;
+                padding: 20px;
+                background: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 6px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+    
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 15px;
+            }
+    
+            .modal-header h3 {
+                margin: 0;
+                font-weight: 600;
+                font-size: 20px;
+                color: #07074d;
+            }
+    
+            .modal-close {
+                cursor: pointer;
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+    
+            .modal-content label {
+                display: block;
+                font-weight: 500;
+                font-size: 16px;
+                color: #07074d;
+                margin-bottom: 12px;
+            }
+    
+            .modal-content input {
+                width: 100%;
+                padding: 12px 24px;
+                border-radius: 6px;
+                border: 1px solid #e0e0e0;
+                background: white;
+                font-weight: 500;
+                font-size: 16px;
+                color: #6b7280;
+                outline: none;
+                resize: none;
+                margin-bottom: 20px;
+            }
+    
+            .modal-content input:focus {
+                border-color: #6a64f1;
+                box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+            }
+    
+            .modal-content button {
+                width: 100%;
+                padding: 14px 32px;
+                background-color: #6a64f1;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+    
+            .modal-content button:hover {
+                box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+            }
+        </style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bid Interface</title>
+    
+    <script>
+        //curl --request GET --url "https://deep-index.moralis.io/api/v2.2/nft/0x524cab2ec69124574082676e6f654a18df49a048/7603" 
+        // --header "accept: application/json" --header "X-API-Key: s7mCJy4aBjFMw7dQPmP9MPV5Uk5PMiL5H0QdACiSwIYEr8ZdbyCTE7p0suLBpZFr"
+        async function getNFT(){
+            const url = 'https://deep-index.moralis.io/api/v2.2/nft/0x524cab2ec69124574082676e6f654a18df49a048/7603';
+            await fetch(url,{
+                method: "GET",
+                headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-API-Key": "s7mCJy4aBjFMw7dQPmP9MPV5Uk5PMiL5H0QdACiSwIYEr8ZdbyCTE7p0suLBpZFr",
+                
+                }
+            }).then(response=>{
+                if(response.status !=200) {
+                throw new Error(`HTTP ERROR:${response.status}`);
+                } 
+                return response.text()
+                }
+
+            ).then(data => {
+            console.log(data);
+            // convert to html
+        
+            }).catch(err => {
+            console.log(err);
+            }) 
+        }
+
+        sendRequest();
+    </script>
+    </head>
+    <body>
+        
+            <!-- Gallery Section -->
+            <div class="gallery">
+                <img src="#" alt="Image 1">
+                <img src="#" alt="Image 2">
+                <img src="#" alt="Image 3">
+                <img src="#" alt="Image 4">
+            </div>
+        
+            <!-- Auction Details Section -->
+            <div class="auction-details">
+                <div class="timer">Ends in: 03:45:43</div>
+                <button class="bid-button">Bid $13.00+</button>
+            </div>
+        
+            <!-- Bidders Section -->
+            <ul class="bidders">
+                <li>
+                    <span>1. 0x12abc...215</span>
+                    <span>$12.00</span>
+                </li>
+                <li>
+                    <span>2. 0x24913...1ac</span>
+                    <span>$11.50</span>
+                </li>
+            </ul>
+        
+            <!-- Modal Section -->
+            <div class="bid-modal" id="bidModal">
+                <div class="modal-header">
+                    <h3>Bid</h3>
+                    <span class="modal-close" id="closeModal">&times;</span>
+                </div>
+                <div class="modal-content">
+                    <label for="bidAmount">Amount:</label>
+                    <input type="number" id="bidAmount" value="13.00" step="0.01">
+                    <button>Place Your Bid</button>
+                </div>
+            </div>
+        
+            <script>
+                const modal = document.getElementById('bidModal');
+                const closeModal = document.getElementById('closeModal');
+                const bidButton = document.querySelector('.bid-button');
+        
+                bidButton.addEventListener('click', () => {
+                    modal.style.display = 'block';
+                });
+        
+                closeModal.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+        
+                window.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            </script>
+        
+        
+    </body>
+</html>

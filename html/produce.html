@@ -38,7 +38,10 @@ console.log(id, val, id+'_custom', $custom, customHidden);
 
     </script>
 
-    <link rel="stylesheet" type="text/css" href="css/form.css" media="screen,print">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/produce.css">
+    <link rel="stylesheet" type="text/css" href="css/form.css">
+
 </head>
 <body>
     <!--
@@ -232,7 +235,7 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                 <!--     uint32 numBids; // increase after this many bids -->
                 <!--     bool canBidAboveIncrease; -->
                 <div class="flex flex-wrap -mx-3">
-                    <div class="w-full sm:w-div3 px-3">
+                    <div class="w-full sm-div3 px-3">
                         <div class="mb-5">
                             <label for="increase_amount" class="form-label">Bid Amount</label>
                             <input
@@ -245,7 +248,7 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                             <small>How much will the price increase by amount after bidsCount bids occur?</small>
                         </div>
                     </div>
-                    <div class="w-full sm:w-div3 px-3">
+                    <div class="w-full sm-div3 px-3">
                         <div class="mb-5">
                             <label for="increase_numBids" class="form-label"> Number of Bids</label>
                             <input
@@ -259,7 +262,7 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                         </div>
                         
                     </div>
-                    <div class="w-full sm:w-div3 px-3">
+                    <div class="w-full sm-div3 px-3">
                         <label class="form-label">Above Increase</label>
                         <div class="flex mb-5" style="padding-top:10px">
                             <div class="flex">

@@ -1,0 +1,55 @@
+/* Universal Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Styles */
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f9f9f9;
+    color: #07074d;
+}
+
+/* Utility Classes */
+.flex {
+    display: flex;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.gap-4 {
+    gap: 16px;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.sm\:w-half {
+    width: 50%;
+}
+@media (min-width: 540px) {
+    .sm-div3 {
+        width: 33%;
+    }
+}
+.-mx-3 {
+    margin-left: -12px;
+    margin-right: -12px;
+}
+.px-3 {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.mb-5 {
+    margin-bottom: 20px;
+}
+
+.pt-3 {
+    padding-top: 12px;
+}
