@@ -62,6 +62,11 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     error OutOfClaimPeriod();
     error InvalidClaimParams();
 
+    modifier onlyOwnerOrManager() {
+        _onlyOwnerOrManager();
+        _;
+    }
+
     constructor() {
         _disableInitializers();
     }
@@ -128,7 +133,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     }
 
     // sends all the money back to the people
-    function cancel() external onlyOwner {
+    function cancel() external onlyOwnerOrManager {
         if (!cancelable) {
             revert NotCancelable();
         }
@@ -139,7 +144,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         canceled = true;
     }
 
-    function refund(address bidder) external onlyOwner {
+    function refund(address bidder) external onlyOwnerOrManager {
         
         uint32 l = uint32(bids.length);
         uint32 index;
@@ -164,15 +169,14 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         uint256 amount
     ) 
         external 
-        onlyOwner 
+        onlyOwnerOrManager
     {
-
         _bid(bidder, amount, true);
     }
 
 
     // owner withdraws all the money after auction is over
-    function withdraw(address recipient) external onlyOwner {
+    function withdraw(address recipient) external onlyOwnerOrManager {
         withdrawValidate();
 
         // if (token == address(0)) {
@@ -199,7 +203,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
  
     // auction owner can send the NFTs anywhere if auction was canceled or pass claimPeriodTime
     // the auction owner would typically have been owner of all the NFTs sent to it
-    function NFTtransfer(address nftContract, uint256 tokenId, address recipient) external onlyOwner {
+    function NFTtransfer(address nftContract, uint256 tokenId, address recipient) external onlyOwnerOrManager {
         
         if (!canceled || block.timestamp <= endTime + claimPeriod) {
             revert AuctionNotCanceled();
@@ -218,6 +222,11 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     }
     function removeManager(address manager) external onlyOwner {
         managers[manager] = false;
+    }
+
+    function _onlyOwnerOrManager() internal view virtual {
+        address ms = _msgSender();
+        require(owner() == ms || managers[ms] == true, "Ownable: caller is not the owner or manager");
     }
 
     function _bid(address bidder, uint256 amount, bool offchain) internal {
