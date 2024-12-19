@@ -3,19 +3,21 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "ISC",
     "description": "",
     "dependencies": {
-      "@openzeppelin/contracts": "^4.8.1",
-      "@openzeppelin/contracts-upgradeable": "^4.8.1"
+        "@moralisweb3/common-evm-utils": "^2.27.2",
+        "@openzeppelin/contracts": "^4.8.1",
+        "@openzeppelin/contracts-upgradeable": "^4.8.1",
+        "moralis": "^2.27.2"
     },
     "devDependencies": {
-      "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-      "dotenv": "^16.4.5",
-      "hardhat-contract-sizer": "^2.10.0",
-      "solidity-coverage": "^0.8.12"
+        "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+        "dotenv": "^16.4.5",
+        "hardhat-contract-sizer": "^2.10.0",
+        "solidity-coverage": "^0.8.12"
     }
-  }
+}
