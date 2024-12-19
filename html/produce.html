@@ -72,58 +72,6 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                     />
                 </div>
 
-                <!-- bool cancelable -->
-                <div class="mb-5">
-                    <label class="form-label">Cancelable</label>
-                    <div class="flex mb-5">
-                        <div class="flex">
-                            <input
-                                type="radio"
-                                name="cancelable"
-                                id="cancelable1"
-                                class="radio"
-                            />
-                            <label for="cancelable1" class="radio-label"> Yes </label>
-                        </div>
-                        <div class="flex">
-                            <input
-                                type="radio"
-                                name="cancelable"
-                                id="cancelable2"
-                                class="radio"
-                            />
-                            <label for="cancelable2" class="radio-label"> No </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- uint64 startTime -->
-                <!-- uint64 endTime -->
-                <div class="flex flex-wrap -mx-3">
-                    <div class="w-full sm:w-half px-3">
-                    <div class="mb-5 w-full">
-                        <label for="startTime" class="form-label"> Start Date </label>
-                        <input
-                        type="date"
-                        name="startTime"
-                        id="startTime"
-                        class="form-input"
-                        />
-                    </div>
-                    </div>
-                    <div class="w-full sm:w-half px-3">
-                    <div class="mb-5">
-                        <label for="endTime" class="form-label"> End Date </label>
-                        <input
-                        type="date"
-                        name="endTime"
-                        id="endTime"
-                        class="form-input"
-                        />
-                    </div>
-                    </div>
-                </div>
-
                 <!-- uint32 maxWinners -->
                 <div class="mb-5">
                     <label for="maxWinners" class="form-label">
@@ -235,8 +183,8 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                 <!--     uint32 numBids; // increase after this many bids -->
                 <!--     bool canBidAboveIncrease; -->
                 <div class="flex flex-wrap -mx-3">
-                    <div class="w-full sm-div3 px-3">
-                        <div class="mb-5">
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5  w-full">
                             <label for="increase_amount" class="form-label">Bid Amount</label>
                             <input
                             type="text"
@@ -248,8 +196,8 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                             <small>How much will the price increase by amount after bidsCount bids occur?</small>
                         </div>
                     </div>
-                    <div class="w-full sm-div3 px-3">
-                        <div class="mb-5">
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5 ">
                             <label for="increase_numBids" class="form-label"> Number of Bids</label>
                             <input
                             type="number"
@@ -262,58 +210,96 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                         </div>
                         
                     </div>
-                    <div class="w-full sm-div3 px-3">
-                        <label class="form-label">Above Increase</label>
-                        <div class="flex mb-5" style="padding-top:10px">
-                            <div class="flex">
-                                <input
-                                    type="radio"
-                                    name="canBidAboveIncrease"
-                                    id="canBidAboveIncrease1"
-                                    class="radio"
-                                />
-                                <label for="canBidAboveIncrease1" class="radio-label"> Yes </label>
+                    
+                </div>
+
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full sm:w-half px-3">
+                        <!-- bool cancelable -->
+                        <div class="mb-5 w-full">
+                            <label class="form-label">Can bid unlimited amount</label>
+                            <div class="flex mb-5" style="padding-top:10px">
+                                <div class="flex">
+                                    <input
+                                        type="radio"
+                                        name="canBidAboveIncrease"
+                                        id="canBidAboveIncrease1"
+                                        class="radio"
+                                    />
+                                    <label for="canBidAboveIncrease1" class="radio-label"> Yes </label>
+                                </div>
+                                <div class="flex">
+                                    <input
+                                        type="radio"
+                                        name="canBidAboveIncrease"
+                                        id="canBidAboveIncrease2"
+                                        class="radio"
+                                    />
+                                    <label for="canBidAboveIncrease2" class="radio-label"> No </label>
+                                </div>
                             </div>
-                            <div class="flex">
-                                <input
-                                    type="radio"
-                                    name="canBidAboveIncrease"
-                                    id="canBidAboveIncrease2"
-                                    class="radio"
-                                />
-                                <label for="canBidAboveIncrease2" class="radio-label"> No </label>
+                            <small>Select 'No' if bidders can only bid in increments</small>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5 w-full">
+                            <label class="form-label">Cancelable</label>
+                            <div class="flex mb-5">
+                                <div class="flex">
+                                    <input
+                                        type="radio"
+                                        name="cancelable"
+                                        id="cancelable1"
+                                        class="radio"
+                                    />
+                                    <label for="cancelable1" class="radio-label"> Yes </label>
+                                </div>
+                                <div class="flex">
+                                    <input
+                                        type="radio"
+                                        name="cancelable"
+                                        id="cancelable2"
+                                        class="radio"
+                                    />
+                                    <label for="cancelable2" class="radio-label"> No </label>
+                                </div>
                             </div>
                         </div>
-                        <small>if Bid can not be more that amount turn into 'No'</small>
+                    </div>
+                </div>
+                
+
+                
+
+                <!-- uint64 startTime -->
+                <!-- uint64 endTime -->
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5 w-full">
+                            <label for="startTime" class="form-label"> Start Date </label>
+                            <input
+                            type="date"
+                            name="startTime"
+                            id="startTime"
+                            class="form-input"
+                            />
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-half px-3">
+                        <div class="mb-5">
+                            <label for="endTime" class="form-label"> End Date </label>
+                            <input
+                            type="date"
+                            name="endTime"
+                            id="endTime"
+                            class="form-input"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <!-- address nft -->
-                <div class="mb-5">
-                    <label for="nft" class="form-label">address of NFT contract</label>
-                    <input
-                    type="text"
-                    name="nft"
-                    id="nft"
-                    placeholder="0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
-                    class="form-input"
-                    />
-                </div>
-
-                <!-- uint256[] memory tokenIds -->
-                <div class="mb-5">
-                    <label for="tokenIds" class="form-label">tokenIds</label>
-                    <input
-                    type="text"
-                    name="tokenIds"
-                    id="tokenIds"
-                    placeholder="[22,555,333,5556]"
-                    class="form-input"
-                    />
-                </div>
-
                 <div>
-                    <button class="btn">Submit</button>
+                    <button class="btn">Deploy Auction Contracts</button>
                 </div>
             </form>
         </div>
