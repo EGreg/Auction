@@ -35,10 +35,6 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     mapping (address => WinningStruct) winningBidIndex; // 1-based index, thus 0 means not winning
     mapping (address => bool) managers;
 
-    ERC721Upgradeable public nftContract;
-
-    mapping(uint256 => NFTState) private tokenStates;
-
     event AlreadyWinning(address bidder, uint256 index);
     event Bid(address bidder, uint256 amount, uint32 numBids);
     event RefundedBid(address bidder, uint256 amount);
@@ -61,10 +57,10 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
     error NFTAlreadyClaimed();
     error NFTNotFound();
-    error Disabled();
 
     error WrongClaimInterval();
-
+    error OutOfClaimPeriod();
+    error InvalidClaimParams();
 
     constructor() {
         _disableInitializers();
@@ -79,9 +75,7 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         uint32 maxWinners_,
         uint32 winnerClaimInterval_,
         uint256 startingPrice_,
-        Increase memory increase_,
-        address nft,
-        uint256[] memory tokenStates_
+        Increase memory increase_
     ) 
         external 
         initializer 
@@ -108,11 +102,13 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         bids.push(BidStruct(address(0), false, 0));
         winningSmallestIndex++;
 
-        nftContract = ERC721Upgradeable(nft);
+        if (
+            winnerClaimInterval != 0 &&
+            endTime + claimPeriod < endTime + maxWinners*winnerClaimInterval
+        ) {
+            revert InvalidClaimParams();
+        }
 
-        for(uint256 i = 0; i < tokenStates_.length; i++) {
-            tokenStates[tokenStates_[i]] = NFTState.NOT_CLAIMED;
-        } 
     }
 
     function bid(uint256 amount) payable public {
@@ -190,36 +186,31 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
     // auction winners can claim any NFT owned by the auction,
     // and shouldn't bid unless the count > maxWinners
-    function NFTclaim(uint256 tokenId) external {
-        if (address(nftContract) == address(0)) {
-            revert Disabled();
-        }
-        address sender = _msgSender();
-        _claim(sender);
-
-        checkNFT(tokenId);
-        
-        //nftContract.safeTransferFrom(address(this), sender, tokenId); // will revert if not owned
-        try nftContract.safeTransferFrom(address(this), sender, tokenId) {
-            // all ok
-        } catch {
-            // else if any errors. do refund
-            _refundBid(winningBidIndex[sender].bidIndex);
-        }
+    function claim(address nftContract, uint256 tokenId, address recipient) external {
+        //address sender = _msgSender();
+        _claim(recipient, nftContract, tokenId);
     }
 
+    function claimMultiple(address[] calldata nftContracts, uint256[] calldata tokenIds, address[] calldata recipients) external {
+        for(uint256 i=0; i < nftContracts.length; i++ ) {
+            _claim(recipients[i], nftContracts[i], tokenIds[i]);
+        }
+    }
+ 
     // auction owner can send the NFTs anywhere if auction was canceled or pass claimPeriodTime
     // the auction owner would typically have been owner of all the NFTs sent to it
-    function NFTtransfer(uint256 tokenId, address recipient) external onlyOwner {
-        if (address(nftContract) == address(0)) {
-            revert Disabled();
-        }
+    function NFTtransfer(address nftContract, uint256 tokenId, address recipient) external onlyOwner {
         
         if (!canceled || block.timestamp <= endTime + claimPeriod) {
             revert AuctionNotCanceled();
         }
-        checkNFT(tokenId);
-        nftContract.safeTransferFrom(address(this), recipient, tokenId);
+        
+        ERC721Upgradeable(nftContract).safeTransferFrom(address(this), recipient, tokenId);
+        if (bids.length > 0) {
+            _refundBid(winningSmallestIndex);
+            winningSmallestIndex++;
+        }
+
         
     }
     function addManager(address manager) external onlyOwner {
@@ -275,17 +266,6 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         
     }
 
-    function checkNFT(uint256 tokenId) internal {
-        
-        if (tokenStates[tokenId] == NFTState.NONE) {
-            revert NFTNotFound();
-        }
-        if (tokenStates[tokenId] == NFTState.CLAIMED) {
-            revert NFTAlreadyClaimed();
-        }
-        tokenStates[tokenId] = NFTState.CLAIMED;
-    }
-
     function withdrawValidate() internal view {
         if (block.timestamp < endTime) {
             revert AuctionNotFinished();
@@ -312,10 +292,18 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     }
    
     // should be call in any variant of claim
-    // validation sender as winner, setup sender as already claimed  etc
-    function _claim(address sender) internal {
-        requireWinner(sender);
-        winningBidIndex[sender].claimed = true;
+    // validation sender as winner, setup sender as already claimed and trying to send NFT
+    function _claim(address winner, address nftContract, uint256 tokenId) internal {
+        requireWinner(winner);
+        winningBidIndex[winner].claimed = true;
+
+        //nftContract.safeTransferFrom(address(this), winner, tokenId); // will revert if not owned
+        try ERC721Upgradeable(nftContract).safeTransferFrom(address(this), winner, tokenId) {
+            // all ok
+        } catch {
+            // else if any errors. do refund
+            _refundBid(winningBidIndex[winner].bidIndex);
+        }
     }
      
     function requireWinner(address sender) internal view {
@@ -332,6 +320,11 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         if (winningBidIndex[sender].claimed == true) {
             revert AlreadyClaimed();
         }
+
+        if (endTime + claimPeriod < block.timestamp) {
+            revert OutOfClaimPeriod();
+        }
+
         uint256 orderInClaim = winningBidIndex[sender].bidIndex - winningSmallestIndex;
         if (endTime + orderInClaim*winnerClaimInterval < block.timestamp) {
             revert WrongClaimInterval();

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0 <0.9.0;
 interface IAuction {
-    enum NFTState {NONE, NOT_CLAIMED, CLAIMED}
-
+    
     struct BidStruct {
         address bidder;
         bool offchain;
@@ -23,9 +22,7 @@ interface IAuction {
         uint32 maxWinners,
         uint32 winnerClaimInterval,
         uint256 startingPrice,
-        Increase memory increase,
-        address nft,
-        uint256[] memory tokenIds
+        Increase memory increase
     ) external;
     
     function bid(uint256 amount) payable external;
@@ -38,7 +35,8 @@ interface IAuction {
     function bidOffchain(address participant, uint256 amount) external;
     function refund(address participant) external;
 
-    function NFTclaim(uint256 tokenId) external;
-    function NFTtransfer(uint256 tokenId, address recipient) external;
+    function claim(address nftContract, uint256 tokenId, address recipient) external;
+    function claimMultiple(address[] calldata nftContracts, uint256[] calldata tokenIds, address[] calldata recipients) external;
+    function NFTtransfer(address nftContract, uint256 tokenId, address recipient) external;
     
 }

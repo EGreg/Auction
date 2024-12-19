@@ -48,8 +48,6 @@ contract AuctionFactory is IAuctionFactory, Ownable {
     * Mean after endTime 1st winner can claim and choose token, after `winnerClaimInterval` 2nd winner can choose and so on
     * @param startingPrice starting price 
     * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
-    * @param nft nft contract
-    * @param tokenIds winners will obtain this tokenIds 
     * @return instance address of created instance `Auction`
     */
     function produce(
@@ -61,9 +59,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         uint32 maxWinners,
         uint32 winnerClaimInterval,
         uint256 startingPrice,
-        IAuction.Increase memory increase,
-        address nft,
-        uint256[] memory tokenIds
+        IAuction.Increase memory increase
     ) 
         external 
         returns (address instance) 
@@ -74,7 +70,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         _beforeInit(instance);
         _validateParams(token, endTime);
 
-        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, maxWinners, winnerClaimInterval, startingPrice, increase, nft, tokenIds);
+        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, maxWinners, winnerClaimInterval, startingPrice, increase);
         
         _afterInit(instance, ms);
     }
@@ -91,9 +87,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
     * @param winnerClaimInterval winners can choose tokenid in claim method. 
     * Mean after endTime 1st winner can claim and choose token, after `winnerClaimInterval` 2nd winner can choose and so on
     * @param startingPrice starting price 
-    * @param increase increase tuple [amount, bidsCount, canBidAbove] How much will the price increase by amount after bidsCount bids occur?
-    * @param nft nft contract
-    * @param tokenIds winners will obtain this tokenIds 
+    * @param increase increase tuple [amount, bidsCount, canBidAbove] how much will the price increase `amount` after `bidsCount` bids happens
     * @return instance address of created instance `Auction`
     */
     function produceDeterministic(
@@ -106,9 +100,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         uint32 maxWinners,
         uint32 winnerClaimInterval,
         uint256 startingPrice,
-        IAuction.Increase memory increase,
-        address nft,
-        uint256[] memory tokenIds
+        IAuction.Increase memory increase
     ) 
         external 
         returns (address instance) 
@@ -118,7 +110,7 @@ contract AuctionFactory is IAuctionFactory, Ownable {
         _beforeInit(instance);
         _validateParams(token, endTime);
         
-        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, maxWinners, winnerClaimInterval, startingPrice, increase, nft, tokenIds);
+        IAuction(instance).initialize(token, cancelable, startTime, endTime, claimPeriod, maxWinners, winnerClaimInterval, startingPrice, increase);
         _afterInit(instance, ms);
     }
 
