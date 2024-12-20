@@ -1,65 +1,19 @@
 <html>
 <head>
-
     <script type="text/javascript" src="https://intercoin.app/Q/plugins/Q/js/jquery-3.7.1.min.js"></script>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js"></script>
-    
-    <!-- 
-    <script type="text/javascript" src=""></script>
-    -->
-    <script type="text/javascript">
-    $(function(){
-        // localStorage.setItem('AuctionFactoryAddress', '0x123123123');
-        var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
-        if (AuctionFactoryAddress === null) {
-            $('body').html(
-            "need to setup 'AuctionFactoryAddress' key in localStorage"
-            );
-        }
-
-        
-        $('form select.showCustomInput').off('change').on('change', function(e){
-            e.preventDefault();
-            var id = $(this).attr('id');
-            var val = $(this).val();
-            var $custom = $(this).parent().find('#'+id+'_custom');
-            var customHidden = ($custom.css('display') == 'none') ? false : true;
-console.log(id, val, id+'_custom', $custom, customHidden);
-            if (val == 'custom' && !customHidden) { $custom.show(); }
-            if (val != 'custom' && customHidden) { $custom.hide(); }
-        })
-        $('#ProduceForm').on('submit', function(e) { //use on if jQuery 1.7+
-            e.preventDefault();  //prevent form from submitting
-            var data = $("#ProduceForm :input").serializeArray();
-            console.log(data); //use the console for debugging, F12 in Chrome, not alerts
-        });
-    });
-
-
-    </script>
+    <script type="module" src="js/produce.js" defer></script>
 
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/produce.css">
     <link rel="stylesheet" type="text/css" href="css/form.css">
+    <link rel="stylesheet" type="text/css" href="css/modal.css">
 
 </head>
 <body>
-    <!--
-    address token,
-    bool cancelable,
-    uint64 startTime,
-    uint64 endTime,
-    uint64 claimPeriod,
-    uint32 maxWinners,
-    uint32 winnerClaimInterval,
-    uint256 startingPrice,
-    IAuction.Increase memory increase,
-    address nft,
-    uint256[] memory tokenIds
-    -->
+    
     <div class="main-wrapper">
         <div class="form-wrapper">
-            <form id="ProduceForm" action="javascript::void(0)">
+            <form id="ProduceForm" action="javascript:void(0)">
                 <!-- address token -->
                 <div class="mb-5">
                     <label for="token" class="form-label">Token</label>
@@ -208,9 +162,7 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                             />
                             <small>How many bids need to occur for the price to increase?</small>
                         </div>
-                        
                     </div>
-                    
                 </div>
 
                 <div class="flex flex-wrap -mx-3">
@@ -267,9 +219,6 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                         </div>
                     </div>
                 </div>
-                
-
-                
 
                 <!-- uint64 startTime -->
                 <!-- uint64 endTime -->
@@ -299,11 +248,51 @@ console.log(id, val, id+'_custom', $custom, customHidden);
                 </div>
 
                 <div>
-                    <button class="btn">Deploy Auction Contracts</button>
+                    <button class="btn produce-auction-button-openpopup">Deploy Auction Contracts</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Modal Section -->
+    <div class="produce-modal" id="produceModal">
+        <div class="modal-header">
+            <h3>Produce</h3>
+            <span class="modal-close" id="closeProduceModal">&times;</span>
+        </div>
+        <div class="modal-content">
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full sm:w-half px-3">
+                    <div class="mb-5 w-full">
+                        <button data-chainid="1"class="btn produce-auction-button">Ethereum</button>
+                    </div>
+                </div>
+                <div class="w-full sm:w-half px-3">
+                    <div class="mb-5 w-full">
+                        <button data-chainid="137" class="btn produce-auction-button">Polygon</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full sm:w-half px-3">
+                    <div class="mb-5 w-full">
+                        <button data-chainid="56" class="btn produce-auction-button">Binance</button>
+                    </div>
+                </div>
+                <div class="w-full sm:w-half px-3">
+                    <div class="mb-5 w-full">
+                        <button data-chainid="8453" class="btn produce-auction-button">Base</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
 </body>
+
+
+
 </html>

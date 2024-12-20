@@ -6,14 +6,16 @@
     margin-bottom: 8px;
     display: inline-block;
 }
-
+input::placeholder {
+    color: #6b7280;
+}
 .form-input {
     width: 100%;
     padding: 12px 16px;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 1rem;
-    color: #6b7280;
+    color: #000000;
     outline: none;
     background-color: white;
 }
@@ -45,8 +47,35 @@
     font-weight: 600;
     cursor: pointer;
     text-align: center;
+    transition: background-color 0.3s ease; /* Smooth color change */
+
 }
 
 .btn:hover {
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+}
+/* Disabled state */
+.btn:disabled {
+    background-color: #cccccc; /* Gray background */
+    cursor: not-allowed; /* Change cursor to indicate it's disabled */
+    opacity: 0.6; /* Add transparency */
+    pointer-events: none; /* Prevent any interaction */
+}
+/* Processing animation */
+.btn.processing {
+background-color: gray; /* Change color to gray */
+animation: pulse 1.5s infinite; /* Pulsing effect while processing */
+}
+  
+/* Keyframes for pulsing effect */
+@keyframes pulse {
+0% {
+    background-color: gray;
+}
+50% {
+    background-color: #b3b3b3; /* Slightly lighter gray */
+}
+100% {
+    background-color: gray;
+}
 }
