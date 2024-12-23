@@ -175,7 +175,7 @@ async function callProduceMethod(chainId,salt) {
         numBids: data.increase_numBids,
         canBidAboveIncrease: typeof(data.canBidAboveIncrease !== 'undefined') && data.canBidAboveIncrease == 'on' ? true : false
     });
-
+    
     const contract = new ethers.Contract(AuctionFactoryAddress, CONTRACT_ABI, signer);
     const txResponse = await contract.produceDeterministic(...params);
     const txReceipt = await txResponse.wait();
@@ -192,7 +192,7 @@ function randomHash() {
 }
 
 
-// localStorage.setItem('AuctionFactoryAddress', '0xf8c070872100dFc4d0736647f72F608d7e49Fe39'); // polygon
+// localStorage.setItem('AuctionFactoryAddress', '0x752d8a444121b3449d6cbb0A1235DfA12078b288'); // polygon
 var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
 if (AuctionFactoryAddress === null) {
     $('body').html(
@@ -258,7 +258,7 @@ $('.produce-auction-button').off('click').on('click', function(e) {
             // The object key could be “Assets.Auction.list” and you’d have an array all auctions (even ended ones), sorted by endTime probably. 
             // Put whatever info in each auction as is useful.
 
-            // localStorage.setItem('AuctionFactoryAddress', '0xf8c070872100dFc4d0736647f72F608d7e49Fe39');
+            // localStorage.setItem('AuctionFactoryAddress', '0x45DBdA62B098F67D54b2871D90dA6dFa43495bF1');
             var storageData = localStorage.getItem('Assets.Auction.list');
             if (storageData === null){
                 storageData = {};

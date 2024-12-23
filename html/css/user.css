@@ -1,0 +1,343 @@
+
+.content-wrapper {
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+.gallery {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 5px 0;
+    margin-bottom: 15px;
+}
+
+.gallery img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.auction-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.timer {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.btn {
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #6a64f1;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #5a54d1;
+}
+
+.bidders {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.bidders li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.popup, .modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.popup .popup-header, .modal .modal-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.popup .close-popup, .modal .close-modal {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #6a64f1;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+.popup form, .modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup form .form-label, .popup form .form-input {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+}
+
+.popup form .form-label {
+    width: 40%;
+    text-align: left;
+}
+
+.popup form .form-input {
+    width: 55%;
+    margin-left: 5%;
+}
+
+.popup form .form-label, .popup form .form-input {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+}
+
+.popup form .form-label {
+    width: auto;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.popup form .form-input {
+    width: calc(100% - 120px);
+}
+
+.popup form .form-label, .popup form .form-input {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.popup form .form-label {
+    width: auto;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.popup form .form-input {
+    width: calc(100% - 120px);
+    max-width: 300px;
+}
+
+.popup form .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.popup form .form-label {
+    width: auto;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.popup form .form-input {
+    flex: 1;
+}
+
+
+/* Ensure Bid Amount and input are aligned in bidForm */
+.bid-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bid-form .form-label {
+    flex-shrink: 0;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.bid-form .form-input {
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+
+/* Ensure Bid Amount and input are aligned in bidForm with specific rules */
+#bidForm {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 0 auto;
+}
+
+#bidForm .form-label {
+    flex-shrink: 0 !important;
+    margin-right: 10px !important;
+    font-weight: bold !important;
+}
+
+#bidForm .form-input {
+    flex-grow: 1 !important;
+    max-width: 300px !important;
+}
+
+
+/* Debug styles to visualize element boundaries and alignment */
+#bidForm {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 10px;
+}
+
+#bidForm .form-label {
+    flex-shrink: 0 !important;
+    margin-right: 10px !important;
+    font-weight: bold !important;
+}
+
+#bidForm .form-input {
+    flex-grow: 1 !important;
+    max-width: 300px !important;
+}
+
+
+/* Fix styles to ensure Bid Amount and input align properly */
+#bidForm {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    padding: 10px;
+}
+
+#bidForm .form-label {
+    flex: 0 0 auto !important;
+    margin-right: 10px !important;
+    font-weight: bold !important;
+}
+
+#bidForm .form-input {
+    flex: 1 1 auto !important;
+    max-width: 300px !important;
+}
+
+
+/* Adjust Bid Amount and input alignment; button on new line */
+#bidForm {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 10px;
+}
+
+#bidForm .form-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100%;
+}
+
+#bidForm .form-label {
+    flex-shrink: 0 !important;
+    margin-right: 10px !important;
+    font-weight: bold !important;
+}
+
+#bidForm .form-input {
+    flex-grow: 1 !important;
+    max-width: 300px !important;
+}
+
+#bidForm .btn {
+    width: 100%;
+}
+
+
+/* Ensure proper layout of Bid Amount and Submit Bid button */
+.bid-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bid-form .form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bid-form .form-label {
+    flex-shrink: 0;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.bid-form .form-input {
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+.bid-form .form-button {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Update input padding and adjust placeholder visibility */
+.bid-form .form-input {
+    flex-grow: 1;
+    max-width: 300px;
+    padding: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* Ensure padding doesn't overflow */
+}
+
+.bid-form .form-label {
+    font-weight: bold;
+}
+
+.bid-form .btn {
+    text-transform: capitalize;
+    padding: 10px 20px;
+}
+
+
+/* Match input styles from produce.html */
+.bid-form .form-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    line-height: 1.2;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

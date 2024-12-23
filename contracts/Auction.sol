@@ -261,6 +261,14 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         managers[manager] = false;
     }
 
+    function getData() external view returns(
+        address,    // token
+        uint64,     // endTime
+        uint256     // nextPrice
+    ) {
+        return (token, endTime, currentPrice+priceIncrease.amount);
+    }
+
     function _onlyOwnerOrManager() internal view virtual {
         address ms = _msgSender();
         require(owner() == ms || managers[ms] == true, "Ownable: caller is not the owner or manager");
