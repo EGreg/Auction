@@ -1,0 +1,94 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://intercoin.app/Q/plugins/Q/js/jquery-3.7.1.min.js"></script>
+    <script>
+        $(function(){
+            
+            const modal = document.getElementById("produceModal");
+            const overlay = document.getElementById("overlay");
+            
+            modal.style.display = "block";
+            overlay.style.display = "block";
+
+            var storageData = localStorage.getItem('Assets.Auction.list');
+            storageData = JSON.parse(storageData);
+            
+
+            
+            
+            $('button.list-auction-button').attr('disabled', 'disabled').addClass('processing');
+            storageData = storageData[Object.keys(storageData)[Object.keys(storageData).length - 1]];
+//console.log(storageData);
+            for( var i in storageData) {
+                
+                if (typeof(storageData[i]) === 'object') {
+                    console.log(storageData[i]);
+                    
+                    var $btn = $('button.list-auction-button[data-chainid="'+storageData[i].chainid+'"]');
+                    $btn.removeAttr('disabled');
+                    var url = 'user.html?address='+storageData[i].address+'&chainid='+storageData[i].chainid;
+                    $btn.off('click').on('click', function(){
+                    
+                        window.location.href = url;
+                    })
+                }
+            }
+            $('button.list-auction-button').removeClass('processing');
+                
+            
+            
+
+
+        })
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/produce.css">
+    <link rel="stylesheet" type="text/css" href="css/form.css">
+    <link rel="stylesheet" type="text/css" href="css/modal.css">
+
+</head>
+<body>
+<!-- Modal Section -->
+ <div class="produce-modal" id="produceModal">
+    <div class="modal-header">
+        <h3>List</h3>
+        <span class="modal-close" id="closeProduceModal">&times;</span>
+    </div>
+    <div class="modal-content">
+        <div class="flex flex-wrap -mx-3">
+            <div class="w-full sm:w-half px-3">
+                <div class="mb-5 w-full">
+                    <button data-chainid="1"class="btn list-auction-button">Ethereum</button>
+                </div>
+            </div>
+            <div class="w-full sm:w-half px-3">
+                <div class="mb-5 w-full">
+                    <button data-chainid="137" class="btn list-auction-button">Polygon</button>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3">
+            <div class="w-full sm:w-half px-3">
+                <div class="mb-5 w-full">
+                    <button data-chainid="56" class="btn list-auction-button">Binance</button>
+                </div>
+            </div>
+            <div class="w-full sm:w-half px-3">
+                <div class="mb-5 w-full">
+                    <button data-chainid="8453" class="btn list-auction-button">Base</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="overlay" id="overlay" style="display: none;"></div>
+</body>
+
+
+
+</html>
