@@ -10,7 +10,7 @@ describe("Auction Contract", function () {
     auction = await Auction.deploy();
 
     await auction.initialize(
-      ethers.constants.AddressZero, // token address
+      ethers.ZeroAddress, // token address
       true, // cancelable
       Math.floor(Date.now() / 1000), // start time
       Math.floor(Date.now() / 1000) + 3600, // end time
@@ -24,7 +24,7 @@ describe("Auction Contract", function () {
 
   describe("bid()", function () {
     it("should allow a valid on-chain bid", async () => {
-      const bidAmount = ethers.utils.parseEther("1");
+      const bidAmount = ethers.parseEther("1");
       await auction.connect(addr1).bid({ value: bidAmount });
 
       const bids = await auction.winning();
@@ -33,35 +33,35 @@ describe("Auction Contract", function () {
     });
 
     it("should revert if bid is below current price", async () => {
-      const bidAmount = ethers.utils.parseEther("0.5");
+      const bidAmount = ethers.parseEther("0.5");
       await expect(
         auction.connect(addr1).bid({ value: bidAmount })
       ).to.be.revertedWith("BidTooSmall");
     });
 
     it("should update current price after multiple bids", async () => {
-      const bidAmount1 = ethers.utils.parseEther("1");
-      const bidAmount2 = ethers.utils.parseEther("2");
+      const bidAmount1 = ethers.parseEther("1");
+      const bidAmount2 = ethers.parseEther("2");
 
       await auction.connect(addr1).bid({ value: bidAmount1 });
       await auction.connect(addr2).bid({ value: bidAmount2 });
 
       const currentPrice = await auction.currentPrice();
-      expect(currentPrice).to.equal(ethers.utils.parseEther("3"));
+      expect(currentPrice).to.equal(ethers.parseEther("3"));
     });
   });
 
   describe("bidOffchain()", function () {
     it("should allow adding off-chain bids", async () => {
-      await auction.connect(owner).bidOffchain(addr1.address, ethers.utils.parseEther("2"));
+      await auction.connect(owner).bidOffchain(addr1.address, ethers.parseEther("2"));
       const bids = await auction.winning();
       expect(bids.length).to.equal(1);
       expect(bids[0].bidder).to.equal(addr1.address);
     });
 
     it("should correctly position off-chain bids using sinking logic", async () => {
-      await auction.connect(owner).bidOffchain(addr1.address, ethers.utils.parseEther("2"));
-      await auction.connect(owner).bidOffchain(addr2.address, ethers.utils.parseEther("3"));
+      await auction.connect(owner).bidOffchain(addr1.address, ethers.parseEther("2"));
+      await auction.connect(owner).bidOffchain(addr2.address, ethers.parseEther("3"));
 
       const bids = await auction.winning();
       expect(bids[0].bidder).to.equal(addr2.address); // Higher bid
@@ -69,7 +69,7 @@ describe("Auction Contract", function () {
     });
 
     it("should not enforce current price rules for off-chain bids", async () => {
-      await auction.connect(owner).bidOffchain(addr1.address, ethers.utils.parseEther("0.5"));
+      await auction.connect(owner).bidOffchain(addr1.address, ethers.parseEther("0.5"));
       const bids = await auction.winning();
       expect(bids[0].bidder).to.equal(addr1.address);
     });
@@ -79,7 +79,7 @@ describe("Auction Contract", function () {
     it("should refund the smallest bid when max winners is exceeded", async () => {
       for (let i = 0; i < 6; i++) {
         const bidder = i % 2 === 0 ? addr1 : addr2;
-        await auction.connect(owner).bidOffchain(bidder.address, ethers.utils.parseEther((i + 1).toString()));
+        await auction.connect(owner).bidOffchain(bidder.address, ethers.parseEther((i + 1).toString()));
       }
 
       const bids = await auction.winning();
@@ -89,15 +89,15 @@ describe("Auction Contract", function () {
 
   describe("Events", function () {
     it("should emit Bid event on successful bid()", async () => {
-      await expect(auction.connect(addr1).bid({ value: ethers.utils.parseEther("1") }))
+      await expect(auction.connect(addr1).bid({ value: ethers.parseEther("1") }))
         .to.emit(auction, "Bid")
-        .withArgs(addr1.address, ethers.utils.parseEther("1"), 1);
+        .withArgs(addr1.address, ethers.parseEther("1"), 1);
     });
 
     it("should emit Bid event on successful bidOffchain()", async () => {
-      await expect(auction.connect(owner).bidOffchain(addr1.address, ethers.utils.parseEther("2")))
+      await expect(auction.connect(owner).bidOffchain(addr1.address, ethers.parseEther("2")))
         .to.emit(auction, "Bid")
-        .withArgs(addr1.address, ethers.utils.parseEther("2"), 1);
+        .withArgs(addr1.address, ethers.parseEther("2"), 1);
     });
   });
 });

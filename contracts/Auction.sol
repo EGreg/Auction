@@ -162,24 +162,30 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     }
 
     function refund(address bidder) external onlyOwnerOrManager {
-        
         uint32 l = uint32(bids.length);
         uint32 index;
         bool done = false;
-        for (uint32 i=winningSmallestIndex; i<l; ++i) {
+
+        for (uint32 i = winningSmallestIndex; i < l; ++i) {
+            if (bids[i].offchain && bids[i].bidder == bidder) {
+                revert("NotWinning");
+            }
+
             done = _refundIfBidder(i, bidder); // send money back
             if (done) {
                 index = i;
                 break;
             }
         }
+
         if (done) {
-            for (uint32 i=index; i<l-1; ++i) {
-                bids[i] = bids[i+1];
+            for (uint32 i = index; i < l - 1; ++i) {
+                bids[i] = bids[i + 1];
             }
             bids.pop();
         }
     }
+
 
     function bidOffchain(
         address bidder,
@@ -196,7 +202,9 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
             if (bids[j].amount <= bids[i].amount) {
                 break; // Stop sinking when the new bid is smaller or equal
             }
-            (bids[i], bids[j]) = (bids[j], bids[i]);
+            BidStruct memory temp = bids[i];
+            bids[i] = bids[j];
+            bids[j] = temp;
             winningBidIndex[bids[i].bidder].bidIndex = i;
             winningBidIndex[bids[j].bidder].bidIndex = j;
             j = i;
