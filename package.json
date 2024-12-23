@@ -12,11 +12,15 @@
         "@moralisweb3/common-evm-utils": "^2.27.2",
         "@openzeppelin/contracts": "^4.8.1",
         "@openzeppelin/contracts-upgradeable": "^4.8.1",
-        "moralis": "^2.27.2"
+        "ethers": "^6.13.4",
+        "install": "^0.13.0",
+        "moralis": "^2.27.2",
+        "npm": "^11.0.0"
     },
     "devDependencies": {
         "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-        "dotenv": "^16.4.5",
+        "dotenv": "^16.4.7",
+        "hardhat": "^2.22.17",
         "hardhat-contract-sizer": "^2.10.0",
         "solidity-coverage": "^0.8.12"
     }
