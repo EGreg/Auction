@@ -79,3 +79,57 @@ animation: pulse 1.5s infinite; /* Pulsing effect while processing */
     background-color: gray;
 }
 }
+
+#bidForm .form-label, #bidForm .form-input {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#bidForm .form-label {
+    width: auto;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+#bidForm .form-input {
+    width: calc(100% - 120px);
+    max-width: 300px;
+}
+
+
+/* Ensure Bid Amount and input are aligned in bidForm */
+.bid-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bid-form .form-label {
+    width: auto;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.bid-form .form-input {
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+
+/* Ensure Bid Amount and input are aligned in bidForm */
+.bid-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bid-form .form-label {
+    flex-shrink: 0;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.bid-form .form-input {
+    flex-grow: 1;
+    max-width: 300px;
+}
