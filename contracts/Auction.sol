@@ -116,9 +116,26 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
     }
 
-    function bid(uint256 amount) payable public {
-        _bid(_msgSender(), amount, false);
+    function bid(uint256 amount) public payable {
+        if (amount < currentPrice) {
+            revert BidTooSmall();
+        }
+
+        if (currentPrice < amount) {
+            if (!priceIncrease.canBidAboveIncrease) {
+                revert CannotBidAboveCurrentPrice();
+            }
+            currentPrice = amount;
+        }
+
+        if (bids.length % priceIncrease.numBids == 0) {
+            currentPrice += priceIncrease.amount;
+        }
+
+        _charge(msg.sender, amount);
+        _bid(msg.sender, amount, false);
     }
+
 
     // return winning bids, from largest to smallest
     function winning() external view returns (BidStruct[] memory result) {
@@ -172,6 +189,18 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         onlyOwnerOrManager
     {
         _bid(bidder, amount, true);
+
+        // Perform sinking logic to place the bid correctly
+        uint32 j = uint32(bids.length) - 1;
+        for (uint32 i = j - 1; i >= winningSmallestIndex && i < j; --i) {
+            if (bids[j].amount <= bids[i].amount) {
+                break; // Stop sinking when the new bid is smaller or equal
+            }
+            (bids[i], bids[j]) = (bids[j], bids[i]);
+            winningBidIndex[bids[i].bidder].bidIndex = i;
+            winningBidIndex[bids[j].bidder].bidIndex = j;
+            j = i;
+        }
     }
 
 
@@ -230,7 +259,6 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     }
 
     function _bid(address bidder, uint256 amount, bool offchain) internal {
-        
         uint32 index = winningBidIndex[bidder].bidIndex;
 
         if (index > 0) {
@@ -238,26 +266,11 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
             return;
         }
 
-        if (token != address(0) && amount == 0) {
-            amount = currentPrice;
-        }
-        if (amount < currentPrice) {
-            revert BidTooSmall();
-        }
-        if (currentPrice < amount) {
-            if (!priceIncrease.canBidAboveIncrease) {
-                revert CannotBidAboveCurrentPrice();
-            }
-            currentPrice = amount;
-        }
-        if (!offchain) {
-            _charge(bidder, amount);
-        }
+        // Add the new bid to the end of the array
+        bids.push(BidStruct(bidder, offchain, amount));
+        winningBidIndex[bidder].bidIndex = uint32(bids.length) - 1;
 
-        if (bids.length % priceIncrease.numBids == 0) {
-            currentPrice += priceIncrease.amount; // every so often
-        }
-        
+        // Refund the smallest bid if the max winners are exceeded
         if (bids.length > maxWinners) {
             _refundBid(winningSmallestIndex);
             winningSmallestIndex++;
@@ -267,13 +280,9 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
             revert MaximumBidsAmountExceeded();
         }
 
-
-        bids.push(BidStruct(bidder, offchain, amount));
-
-        winningBidIndex[bidder].bidIndex = uint32(bids.length) - 1;
         emit Bid(bidder, amount, uint32(bids.length));
-        
     }
+
 
     function withdrawValidate() internal view {
         if (block.timestamp < endTime) {
