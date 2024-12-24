@@ -116,12 +116,12 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
     }
 
-    function bid(uint256 amount) public payable {
+    function bid(uint256 amount) public {
         if (amount < currentPrice) {
             revert BidTooSmall();
         }
 
-        if (currentPrice < amount) {
+        if (currentPrice+priceIncrease.amount < amount) {
             if (!priceIncrease.canBidAboveIncrease) {
                 revert CannotBidAboveCurrentPrice();
             }

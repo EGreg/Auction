@@ -25,7 +25,7 @@ interface IAuction {
         Increase memory increase
     ) external;
     
-    function bid(uint256 amount) payable external;
+    function bid(uint256 amount) external;
     function winning() external view returns (BidStruct[] memory result);
     function cancel() external;
     function withdraw(address recipient) external;
