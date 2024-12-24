@@ -17,6 +17,17 @@ Cross-Chain Auction is a decentralized platform enabling users to create and par
 - **Decentralized Auctions**: Empowers users to create and manage auctions without centralized intermediaries.
 - **Smart Contract Integration**: Utilizes smart contracts to ensure transparent and secure auction processes.
 
+## How It Works
+
+- **Factory** can be used to produce auction instances, all of which share the same (increasingly audited and battle-tested) code. The smart contracts all share the same address across chains, thanks to CREATE2 opcode.
+- **NFTs** are transferred by sellers to the contract, to be auctioned off
+- **User Interface** the Factory HTML interface includes a form to customize the parameters of the auction, and the Auction HTML interface shows the current winners, minimum bid and allows participants to bid
+- **Bids** can take place on any chain, using a stablecoin or off-chain payments such as with cash or credit cards, as the minimum bid increases.
+- **Offchain Bids** are posted on other chains by an automatic script (which is authorized to do so), allowing the auction to progress across multiple chains at once
+- **Winners** of the auction are able to `claim()` the NFTs, in order. The first winner gets to choose among the NFTs, then after an interval (e.g. 10 minutes) each subsequent winner gets a chance to choose what is left, and so on until all the NFTs are claimed
+- **Managers ** the owner can add and remove `managers` of the auction, including our automated script that syndicates bids to other chains
+- **Transfer** the owner and managers of the auction can transfer all the unsold NFTs back to their owners
+
 ## Prerequisites
 
 Before setting up the project, ensure you have the following installed:
