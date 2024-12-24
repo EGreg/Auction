@@ -218,89 +218,166 @@ async function fillBidsList(address, chainid) {
 }
 
 async function sendTransactionWithMetaMask(contractAddress, amount) {
+  if (typeof window.ethereum === 'undefined') {
+    console.error('MetaMask is not installed!');
+    return;
+  }
+
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+  const sender = accounts[0];
+
+  try {
+      const options = {
+          chain: "polygon", // Replace with the target chain (e.g., "eth", "polygon", "bsc")
+          address: "0xYourERC20ContractAddress", // Replace with the ERC-20 token contract address
+          function_name: "bid", // ERC-20 transfer function
+          abi: [
+            {
+              constant: false,
+              inputs: [
+                  {
+                      name: "amount",
+                      type: "uint256",
+                  },
+              ],
+              name: "transferFrom",
+              outputs: [
+                {
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              payable: false,
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+          ],
+          params: {
+            _to: "0xRecipientWalletAddress", // Address to which tokens are sent
+            _value: Moralis.EvmApi.utils.toWei("10", 18), // Amount of tokens (convert to smallest unit)
+          },
+        };
+
+    console.log('Transaction sent! Hash:', txHash);
+  } catch (error) {
+    console.error('Error sending transaction:', error);
+  }
+}
+async function getChainId() {
+  // Check if MetaMask (window.ethereum) is available
+  if (typeof window.ethereum === "undefined") {
+    console.error("MetaMask is not installed!");
+    alert("Please install MetaMask to interact with this application.");
+    return;
+  }
+
+  try {
+    // Request connection to MetaMask (if not already connected)
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+
+    // Get the current chainId
+    const chainId = await window.ethereum.request({ method: "eth_chainId" });
+    console.log("Current Chain ID:", chainId);
+
+    return chainId; // Returns chainId in hexadecimal format (e.g., "0x1" for Ethereum Mainnet)
+  } catch (error) {
+    console.error("Error getting chainId:", error.message);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Get the current URL
+  const url = window.location.href;
+
+  // Create a URLSearchParams object
+  const urlParams = new URLSearchParams(window.location.search);
+
+  const address = urlParams.get('address');   // "25"
+
+  
+  if (address) {
+      getChainId().then(function(chainId){
+        $('.gallery').html('');
+        ['0x1', '0x89', '0x38', '0x2105', '0xa'].forEach((element) => loadAndProcessData(address, element));
+        //loadAndProcessData(address, chainid);
+  
+        fillBidsList(address, chainId);
+        getAuctionData(address, chainId);
+      })
+      
+      
+  } else {
+      console.log('$(<body>).html("missing GET parameters address and chainid");');
+      $('body').html("missing GET parameters address and chainid");
+  }
+
+  $('.bid-form .btn').off('click').on('click', function(e) { 
+      e.preventDefault();  //prevent form from submitting
+    alert('clicked');
+      
+  });   
+  
+  $('#approveForm .btn').off('click').on('click', async function(e) { 
+    e.preventDefault();  //prevent form from submitting
+
+    var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
+
+    var amount = $('#approveAmount').val();
+
     if (typeof window.ethereum === 'undefined') {
       console.error('MetaMask is not installed!');
+      return;
+    }
+
+    if (!amount) {
+      console.error('invalid amount!');
       return;
     }
   
     const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
     const sender = accounts[0];
-  
+
     try {
-        const options = {
-            chain: "polygon", // Replace with the target chain (e.g., "eth", "polygon", "bsc")
-            address: "0xYourERC20ContractAddress", // Replace with the ERC-20 token contract address
-            function_name: "bid", // ERC-20 transfer function
-            abi: [
+      const options = {
+        chain: chainid, // Replace with the target chain (e.g., "eth", "polygon", "bsc")
+        address: tokentoPay, // Replace with the ERC-20 token contract address
+        function_name: "approve", // ERC-20 transfer function
+        abi: [
+          {
+            "inputs": [
               {
-                constant: false,
-                inputs: [
-                    {
-                        name: "amount",
-                        type: "uint256",
-                    },
-                ],
-                name: "transferFrom",
-                outputs: [
-                  {
-                    name: "",
-                    type: "bool",
-                  },
-                ],
-                payable: false,
-                stateMutability: "nonpayable",
-                type: "function",
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
               },
+              {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              }
             ],
-            params: {
-              _to: "0xRecipientWalletAddress", // Address to which tokens are sent
-              _value: Moralis.EvmApi.utils.toWei("10", 18), // Amount of tokens (convert to smallest unit)
-            },
-          };
-  
+            "name": "approve",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+        ],
+        params: {
+          spender: AuctionFactoryAddress, // Address to which tokens are sent
+          amount: window.Moralis.EvmApi.utils.toWei(amount, 18), // Amount of tokens (convert to smallest unit)
+        },
+      };
+
       console.log('Transaction sent! Hash:', txHash);
     } catch (error) {
       console.error('Error sending transaction:', error);
     }
-  }
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Get the current URL
-    const url = window.location.href;
-
-    // Create a URLSearchParams object
-    const urlParams = new URLSearchParams(window.location.search);
-
-    // Access individual parameters
-    const chainid = urlParams.get('chainid'); // "John"
-    const address = urlParams.get('address');   // "25"
-
-    // Log the parameters
-    console.log('chainid:', chainid);
-    console.log('address:', address);
-
-    if ((chainid) && (address)) {
-
-        
-
-        console.log('loadAndProcessData(address, chainid);');
-        // eth, polygon BSC, BASE optimism
-        
-        $('.gallery').html('');
-        ['0x1', '0x89', '0x38', '0x2105', '0xa'].forEach((element) => loadAndProcessData(address, element));
-        //loadAndProcessData(address, chainid);
-
-        fillBidsList(address, chainid);
-        getAuctionData(address, chainid);
-        
-    } else {
-        console.log('$(<body>).html("missing GET parameters address and chainid");');
-        $('body').html("missing GET parameters address and chainid");
-    }
-
-    $('.bid-form .btn').off('click').on('click', function(e) { 
-        e.preventDefault();  //prevent form from submitting
-
-        
-    });    
+  });   
 });

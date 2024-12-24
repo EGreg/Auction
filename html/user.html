@@ -36,6 +36,7 @@
 
 </head>
 <body>
+    <a id="approveToFactory" class="approveToFactory" href="javascript:void(0)">approve</a>
     
     <div class="main-wrapper">
         <div class="content-wrapper">
@@ -69,6 +70,15 @@
                     <span>$11.00</span>
                 </li>
             </ul>
+
+
+            Share this address for NFT owners to send their NFTs to:<br>
+
+    <div onclick="clipboardcopy(0x123123)" style="text-align: center; cursor:pointer; background: #bcbce4; color:#000000; font-weight: bold; border:1px dotted #000000;">
+    0x1234566...
+    </div>
+    
+
         </div>
 
         <!-- Overlay -->
@@ -78,20 +88,33 @@
         <div class="popup" id="bidPopup">
             <span class="close-popup" id="closePopup">&times;</span>
             <div class="popup-header">Bid</div>
-            
 
+            <form id="bidForm" class="bid-form" action="javascript:void(0)">
+                <div class="form-row">
+                    <label for="bidAmount" class="form-label">Amount:</label>
+                    <input type="number" id="bidAmount" class="form-input" placeholder="Enter your bid">
+                </div>
+                <div class="form-button">
+                    <button type="submit" class="btn">Place Your Bid</button>
+                </div>
+            </form>
 
-<form id="bidForm" class="bid-form" action="javascript:void(0)">
-    <div class="form-row">
-        <label for="bidAmount:" class="form-label">Amount:</label>
-        <input type="number" id="bidAmount:" class="form-input" placeholder="Enter your bid">
-    </div>
-    <div class="form-button">
-        <button type="submit" class="btn">Place Your Bid</button>
-    </div>
-</form>
+        </div>
 
+        <!-- Popup Modal Approve -->
+        <div class="popup" id="approvePopup">
+            <span class="close-popup" id="closeApprovePopup">&times;</span>
+            <div class="popup-header">Approve to Factory</div>
 
+            <form id="approveForm"  class="approve-form" action="javascript:void(0)">
+                <div class="form-row">
+                    <label for="approveAmount" class="form-label">Amount:</label>
+                    <input type="number" id="approveAmount" class="form-input" placeholder="1.123">
+                </div>
+                <div class="form-button">
+                    <button type="submit" class="btn">Approve</button>
+                </div>
+            </form>
 
         </div>
     </div>
@@ -99,18 +122,24 @@
     <script>
         
 
-        function togglePopup(show) {
-            const bidPopup = document.getElementById("bidPopup");
+        function togglePopup(popup, show) {
+            
             const overlay = document.getElementById("overlay");
             const displayValue = show ? "block" : "none";
 
-            bidPopup.style.display = displayValue;
+            popup.style.display = displayValue;
             overlay.style.display = displayValue;
         }
 
-        document.getElementById("openPopup").addEventListener("click", () => togglePopup(true));
-        document.getElementById("closePopup").addEventListener("click", () => togglePopup(false));
-        document.getElementById("overlay").addEventListener("click", () => togglePopup(false));
+        const bidPopup = document.getElementById("bidPopup");
+        document.getElementById("openPopup").addEventListener("click", () => togglePopup(bidPopup, true));
+        document.getElementById("closePopup").addEventListener("click", () => togglePopup(bidPopup, false));
+        document.getElementById("overlay").addEventListener("click", () => togglePopup(bidPopup, false));
+
+        const approvePopup = document.getElementById("approvePopup");
+        document.getElementById("approveToFactory").addEventListener("click", () => togglePopup(approvePopup, true));
+        document.getElementById("closeApprovePopup").addEventListener("click", () => togglePopup(approvePopup, false));
+        document.getElementById("overlay").addEventListener("click", () => togglePopup(approvePopup, false));
     </script>
 </body>
 </html>

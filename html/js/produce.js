@@ -200,30 +200,6 @@ if (AuctionFactoryAddress === null) {
     );
 }
 
-// modal
-const modal = document.getElementById('produceModal');
-const closeModal = document.getElementById('closeProduceModal');
-const produceButton = document.querySelector('.produce-auction-button-openpopup');
-
-produceButton.addEventListener('click', () => {
-    modal.style.display = 'block';
-    salt = randomHash();
-    lastTs = Date.now();
-});
-
-closeModal.addEventListener('click', () => {
-    modal.style.display = 'none';
-    salt = '';
-    lastTs = 0;
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        modal.style.display = 'none';
-        salt = '';
-        lastTs = 0;
-    }
-});
 //------------------------------
 $('form select.showCustomInput').off('change').on('change', function(e){
     e.preventDefault();
@@ -278,6 +254,7 @@ $('.produce-auction-button').off('click').on('click', function(e) {
                 address: instance
             };
             localStorage.setItem('Assets.Auction.list', JSON.stringify(storageData));
+            $('.link-to-auction-page').html('Link to <a href="user.html?address='+instance+'">Auction Page</a>');
 
         }).catch(function(error){
             console.error("An error occurred:", error);
@@ -306,43 +283,10 @@ $('.produce-auction-button').off('click').on('click', function(e) {
 
 // Added logic for overlay and popup handling
 
-    document.addEventListener("DOMContentLoaded", () => {
-        function togglePopup(show) {
-            const bidPopup = document.getElementById("bidPopup");
-            const overlay = document.getElementById("overlay");
-            if (!bidPopup || !overlay) return; // Avoid errors if elements are missing
-
-            const displayValue = show ? "block" : "none";
-            bidPopup.style.display = displayValue;
-            overlay.style.display = displayValue;
-        }
-
-        const openPopupButton = document.querySelector(".produce-auction-button-openpopup");
-        if (openPopupButton) {
-            openPopupButton.addEventListener("click", () => togglePopup(true));
-        } else {
-            console.error("Button with class 'produce-auction-button-openpopup' not found.");
-        }
-
-        const closePopupButton = document.querySelector(".modal-close");
-        if (closePopupButton) {
-            closePopupButton.addEventListener("click", () => togglePopup(false));
-        } else {
-            console.error("Button with class 'modal-close' not found.");
-        }
-
-        const overlay = document.getElementById("overlay");
-        if (overlay) {
-            overlay.addEventListener("click", () => togglePopup(false));
-        } else {
-            console.error("Overlay element not found.");
-        }
-    });
-
-
-
-// Logic for handling overlay with produceModal
 document.addEventListener("DOMContentLoaded", () => {
+    salt = randomHash();
+    lastTs = Date.now();
+
     const modal = document.getElementById("produceModal");
     const overlay = document.getElementById("overlay");
     const openButton = document.querySelector(".produce-auction-button-openpopup");
@@ -357,13 +301,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (openButton) {
         openButton.addEventListener("click", () => toggleModal(true));
+    } else {
+        console.error("Button with class 'produce-auction-button-openpopup' not found.");
     }
-
+    
     if (closeButton) {
         closeButton.addEventListener("click", () => toggleModal(false));
+    } else {
+        console.error("Button with class 'modal-close' not found.");
     }
 
     if (overlay) {
         overlay.addEventListener("click", () => toggleModal(false));
+    } else {
+        console.error("Overlay element not found.");
     }
+    
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 });
+
