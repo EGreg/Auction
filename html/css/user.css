@@ -345,3 +345,12 @@
     border-radius: 4px;
     box-sizing: border-box;
 }
+
+.auctionCopyAddressContainer{
+    text-align: center; 
+    cursor:pointer; 
+    background: #bcbce4; 
+    color:#000000; 
+    font-weight: bold; 
+    border:1px dotted #000000;
+}

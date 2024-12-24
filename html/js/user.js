@@ -294,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const address = urlParams.get('address');   // "25"
 
+  $('.auctionCopyAddressContainer').html(address);
   
   if (address) {
       getChainId().then(function(chainId){

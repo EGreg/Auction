@@ -22,7 +22,7 @@
             console.error('Failed to initialize Moralis:', error);
           }
         }
-    
+
          // Initialize Moralis on page load
     initializeMoralis();
     </script>
@@ -74,9 +74,9 @@
 
             Share this address for NFT owners to send their NFTs to:<br>
 
-    <div onclick="clipboardcopy(0x123123)" style="text-align: center; cursor:pointer; background: #bcbce4; color:#000000; font-weight: bold; border:1px dotted #000000;">
-    0x1234566...
-    </div>
+            <div class="auctionCopyAddressContainer" onclick="navigator.clipboard.writeText(new URLSearchParams(window.location.search).get('address')).then(() => alert('Copied!'));">
+            0x1234566...
+            </div>
     
 
         </div>
