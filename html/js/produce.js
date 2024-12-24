@@ -151,7 +151,7 @@ function randomHash() {
 
 // localStorage.setItem('AuctionFactoryAddress', '0x752d8a444121b3449d6cbb0A1235DfA12078b288'); // polygon
 // localStorage.setItem('AuctionFactoryAddress', '0x1869069bACa049D5C9f0433a37602962050dAdee'); // bsc
-var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
+var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress') || '0x1869069baca049d5c9f0433a37602962050dadee';
 if (AuctionFactoryAddress === null) {
     $('body').html(
     "need to setup 'AuctionFactoryAddress' key in localStorage"

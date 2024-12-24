@@ -303,7 +303,7 @@ async function checkApprove(choosenchainid) {
   getChainId().then(function(ret){
     const [current_chainId, sender] = ret;
 
-    var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
+    var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress') || '0x1869069baca049d5c9f0433a37602962050dadee';
 
     const options = {
       chain: choosenchainid, // Blockchain (e.g., 'eth', 'bsc', 'polygon')
@@ -555,7 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     ];
     
-    var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
+    var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress') || '0x1869069baca049d5c9f0433a37602962050dadee';
     const contract = new ethers.Contract(tokentoPay, abi, signer);
     const txResponse = await contract.approve(AuctionFactoryAddress,'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
     const txReceipt = await txResponse.wait();
@@ -566,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function callBidMethod(choosenchainid, amount) {
     
       switchNetwork(choosenchainid);
-      //var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress');
+      //var AuctionFactoryAddress = localStorage.getItem('AuctionFactoryAddress') || '0x1869069baca049d5c9f0433a37602962050dadee';
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const abi =[ // Contract ABI
