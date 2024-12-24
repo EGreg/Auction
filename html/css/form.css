@@ -86,7 +86,7 @@ animation: pulse 1.5s infinite; /* Pulsing effect while processing */
 }
 
 #bidForm .form-label {
-    width: auto;
+    width: 50px;
     margin-right: 10px;
     font-weight: bold;
 }

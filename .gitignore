@@ -16,3 +16,4 @@ TODO.txt
 /scripts/arguments.json
 coverage.json
 package-lock.json
+env.js

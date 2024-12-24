@@ -9,12 +9,13 @@
     <script type="text/javascript" src="https://intercoin.app/Q/plugins/Q/js/jquery-3.7.1.min.js"></script>
     
     <script src="https://unpkg.com/moralis@2.27.2/dist/moralis.js"></script>
+    <script src="js/env.js"></script>
     
     <script>
         async function initializeMoralis() {
           try {
             await Moralis.start({
-              apiKey: 's7mCJy4aBjFMw7dQPmP9MPV5Uk5PMiL5H0QdACiSwIYEr8ZdbyCTE7p0suLBpZFr', // Replace with your actual API key
+              apiKey: window.env.MORALIS_APIKEY, // Replace with your actual API key
             });
             window.Moralis = Moralis;
             console.log('Moralis initialized!');
@@ -52,33 +53,26 @@
             <!-- Auction Details Section -->
             <div class="auction-details">
                 <div class="timer" id="countdownTimer">00:10:00</div>
-                <button class="btn bid-button" id="openPopup">Bid $<span>13.00</span>+</button>
+                <button class="btn bid-button" id="openPopup">Bid</button>
             </div>
 
             <!-- Bidders Section -->
             <ul class="bidders">
+                <!--
                 <li>
                     <span>1. 0x12abc...215</span>
                     <span>$12.00</span>
                 </li>
+                -->
                 <li>
-                    <span>2. 0x24913...1ac</span>
-                    <span>$11.50</span>
-                </li>
-                <li>
-                    <span>3. 0x3b912...41d</span>
-                    <span>$11.00</span>
+                    <span>Loading ...</span>
                 </li>
             </ul>
 
-
             Share this address for NFT owners to send their NFTs to:<br>
-
             <div class="auctionCopyAddressContainer" onclick="navigator.clipboard.writeText(new URLSearchParams(window.location.search).get('address')).then(() => alert('Copied!'));">
-            0x1234566...
+            ...
             </div>
-    
-
         </div>
 
         <!-- Overlay -->
@@ -90,6 +84,20 @@
             <div class="popup-header">Bid</div>
 
             <form id="bidForm" class="bid-form" action="javascript:void(0)">
+                <div class="form-row">
+                    <label for="chainid" class="form-label">Chain:</label>
+                    <select
+                        name="chainid"
+                        id="chainid"
+                        class="form-input"
+                    >
+                        <option value="0x1">Ethereum</option>
+                        <option value="0x89">Polygon</option>
+                        <option value="0x38">BinanceMainNet</option>
+                        <option value="0x2105">Base</option>
+                        <option value="0xa">Optimistic</option>
+                    </select>
+                </div>
                 <div class="form-row">
                     <label for="bidAmount" class="form-label">Amount:</label>
                     <input type="number" id="bidAmount" class="form-input" placeholder="Enter your bid">

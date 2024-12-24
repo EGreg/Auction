@@ -144,11 +144,13 @@ async function getAuctionData(address, chainid) {
         console.log('Response:', response.raw[1]); // Display the result
         console.log('Response:', response.raw[2]); // Display the result
         if (response.raw)  {
-            console.log(response.raw);
             tokentoPay = response.raw[0];
             let currentTime = Math.floor(Date.now()/1000);
             remainingTime = response.raw[1]>currentTime ? response.raw[1] - currentTime : 0;
-            $('#openPopup span').html(ethers.formatEther(response.raw[2]));
+            $('#openPopup').html(
+              'Bid $<span>'+ethers.formatEther(response.raw[2])+'</span>+'
+            );
+            console.log('Bid $<span>'+ethers.formatEther(response.raw[2])+'</span>+');
         } else {
             console.error('Error !!!!!!!!!!!!!!!!!!!!!!!!');    
         }
@@ -295,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const address = urlParams.get('address');   // "25"
 
   $('.auctionCopyAddressContainer').html(address);
-  
+
   if (address) {
       getChainId().then(function(chainId){
         $('.gallery').html('');
