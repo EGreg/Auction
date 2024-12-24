@@ -101,22 +101,6 @@
 
         </div>
 
-        <!-- Popup Modal Approve -->
-        <div class="popup" id="approvePopup">
-            <span class="close-popup" id="closeApprovePopup">&times;</span>
-            <div class="popup-header">Approve to Factory</div>
-
-            <form id="approveForm"  class="approve-form" action="javascript:void(0)">
-                <div class="form-row">
-                    <label for="approveAmount" class="form-label">Amount:</label>
-                    <input type="number" id="approveAmount" class="form-input" placeholder="1.123">
-                </div>
-                <div class="form-button">
-                    <button type="submit" class="btn">Approve</button>
-                </div>
-            </form>
-
-        </div>
     </div>
 
     <script>
@@ -136,10 +120,9 @@
         document.getElementById("closePopup").addEventListener("click", () => togglePopup(bidPopup, false));
         document.getElementById("overlay").addEventListener("click", () => togglePopup(bidPopup, false));
 
-        const approvePopup = document.getElementById("approvePopup");
-        document.getElementById("approveToFactory").addEventListener("click", () => togglePopup(approvePopup, true));
-        document.getElementById("closeApprovePopup").addEventListener("click", () => togglePopup(approvePopup, false));
-        document.getElementById("overlay").addEventListener("click", () => togglePopup(approvePopup, false));
+        
+        //document.getElementById("approveToFactory").addEventListener("click", () => togglePopup(approvePopup, true));
+        
     </script>
 </body>
 </html>
