@@ -8,11 +8,46 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "./interfaces/IAuction.sol";
 import "./interfaces/IAuctionFactory.sol";
 
+// Constants for chain-dependent addresses
+uint256 constant ETHEREUM_CHAIN_ID = 0x1;
+uint256 constant ARBITRUM_CHAIN_ID = 0xa4b1;
+uint256 constant BASE_CHAIN_ID = 0x210d;
+uint256 constant OPTIMISM_CHAIN_ID = 0xa;
+uint256 constant BSC_CHAIN_ID = 0x38;
+uint256 constant POLYGON_CHAIN_ID = 0x89;
+
+address constant ETHEREUM_UNISWAP_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+address constant ETHEREUM_CURVE_REGISTRY = 0x0000000022D53366457F9d5E68Ec105046FC4383;
+
+address constant ARBITRUM_UNISWAP_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+address constant ARBITRUM_CURVE_REGISTRY = address(0);
+
+address constant BASE_UNISWAP_ROUTER = address(0);
+address constant BASE_CURVE_REGISTRY = address(0);
+
+address constant OPTIMISM_UNISWAP_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+address constant OPTIMISM_CURVE_REGISTRY = address(0);
+
+address constant BSC_UNISWAP_ROUTER = address(0);
+address constant BSC_CURVE_REGISTRY = address(0);
+
+address constant POLYGON_UNISWAP_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+address constant POLYGON_CURVE_REGISTRY = address(0);
+
+// Interface for Curve Pool with find_coin_index
+interface ICurveRegistry {
+    function find_pool_for_coins(address from, address to) external view returns (address);
+}
+
+interface ICurvePool {
+    function find_coin_index(address token) external view returns (uint256);
+    function exchange(uint256 i, uint256 j, uint256 dx, uint256 min_dy) external;
+}
+
 //import "hardhat/console.sol";
 contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
-    address deployer; // who called produce() or produceDeterministic(). it's our factory
-    address token;
+    address deployer; // who called produce() or produceDeterministic(). 
 
     bool canceled;
     bool cancelable;
@@ -71,8 +106,13 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         _disableInitializers();
     }
 
+    address public token; // Main token for the auction
+    address public curveRegistry; // Curve Registry for the current chain
+    address public uniswapRouter; // Uniswap Router for the current chain
+
     function initialize(
         address token_,
+        uint256 chainId,
         bool cancelable_,
         uint64 startTime_,
         uint64 endTime_,
@@ -85,7 +125,6 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
         external 
         initializer 
     {
-        
         __Ownable_init();
         __ReentrancyGuard_init();
         deployer = msg.sender;
@@ -109,11 +148,87 @@ contract Auction is IAuction, ReentrancyGuardUpgradeable, OwnableUpgradeable {
 
         if (
             winnerClaimInterval != 0 &&
-            endTime + claimPeriod < endTime + maxWinners*winnerClaimInterval
+            endTime + claimPeriod < endTime + maxWinners * winnerClaimInterval
         ) {
             revert InvalidClaimParams();
         }
 
+        // Chain-specific address assignment
+        if (chainId == ETHEREUM_CHAIN_ID) {
+            uniswapRouter = ETHEREUM_UNISWAP_ROUTER;
+            curveRegistry = ETHEREUM_CURVE_REGISTRY;
+        } else if (chainId == ARBITRUM_CHAIN_ID) {
+            uniswapRouter = ARBITRUM_UNISWAP_ROUTER;
+            curveRegistry = ARBITRUM_CURVE_REGISTRY;
+        } else if (chainId == BASE_CHAIN_ID) {
+            uniswapRouter = BASE_UNISWAP_ROUTER;
+            curveRegistry = BASE_CURVE_REGISTRY;
+        } else if (chainId == OPTIMISM_CHAIN_ID) {
+            uniswapRouter = OPTIMISM_UNISWAP_ROUTER;
+            curveRegistry = OPTIMISM_CURVE_REGISTRY;
+        } else if (chainId == BSC_CHAIN_ID) {
+            uniswapRouter = BSC_UNISWAP_ROUTER;
+            curveRegistry = BSC_CURVE_REGISTRY;
+        } else if (chainId == POLYGON_CHAIN_ID) {
+            uniswapRouter = POLYGON_UNISWAP_ROUTER;
+            curveRegistry = POLYGON_CURVE_REGISTRY;
+        } else {
+            revert("Unsupported chain ID");
+        }
+    }
+
+    function useCurveDEX(address bidToken, uint256 amount) internal returns (bool) {
+        if (curveRegistry == address(0)) {
+            return false; // Curve registry not available, fallback to Uniswap
+        }
+
+        // Find the Curve pool for the token pair
+        address curvePool = ICurveRegistry(curveRegistry).find_pool_for_coins(bidToken, token);
+        if (curvePool == address(0)) {
+            return false; // No Curve pool found, fallback to Uniswap
+        }
+
+        IERC20Upgradeable(bidToken).approve(curvePool, amount);
+
+        uint256 tokenIndexFrom = ICurvePool(curvePool).find_coin_index(bidToken);
+        uint256 tokenIndexTo = ICurvePool(curvePool).find_coin_index(token);
+
+        try ICurvePool(curvePool).exchange(tokenIndexFrom, tokenIndexTo, amount, 0) {
+            return true; // Successful Curve swap
+        } catch {
+            return false; // Curve swap failed, fallback to Uniswap
+        }
+    }
+
+    function bidWithToken(address bidToken, uint256 amount) external {
+        if (bidToken != token) {
+            // Attempt to use Curve for swapping
+            if (useCurveDEX(bidToken, amount)) {
+                return; // Successful Curve swap
+            }
+
+            // Fallback to UniSwap if Curve swap fails or is not applicable
+            IERC20Upgradeable(bidToken).approve(uniswapRouter, amount);
+
+            ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+                tokenIn: bidToken,
+                tokenOut: token,
+                fee: 3000,
+                recipient: address(this),
+                deadline: block.timestamp + 300,
+                amountIn: amount,
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            });
+
+            uint256 swappedAmount = ISwapRouter(uniswapRouter).exactInputSingle(params);
+
+            // Call the bid() function with the swapped amount in the main token
+            bid(swappedAmount);
+        } else {
+            // If the token is the main token, directly bid
+            bid(amount);
+        }
     }
 
     function bid(uint256 amount) public {
